@@ -2,10 +2,8 @@ import React, { useState } from 'react';
 import { 
   Search, 
   Eye, 
-  ShieldCheck, 
   GraduationCap 
 } from 'lucide-react';
-import { Card } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
 import { Modal } from '../components/ui/Modal';
 import { Student, StudentMark } from '../types';
@@ -49,22 +47,30 @@ export const Students: React.FC<StudentsProps> = ({
       {/* Page Header */}
       <div className="page-header">
         <div>
-          <div className="page-pretitle">Student Records</div>
-          <h1 className="page-title">Section {selectedSection} Master Directory</h1>
+          <div className="page-pretitle">Section {selectedSection}</div>
+          <h1 className="page-title">Student Directory</h1>
           <p className="page-description">
-            Showing {filteredStudents.length} of {students.filter(s => s.section === selectedSection).length} enrolled students
+            {filteredStudents.length} students enrolled in Section {selectedSection}.
           </p>
         </div>
 
         {/* Toolbar */}
         <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '0.65rem' }}>
-          <div style={{ position: 'relative', width: 220 }}>
+          <div style={{ position: 'relative', width: 200 }}>
             <input
               type="search"
-              placeholder="Search roll or student..."
+              placeholder="Search student..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              style={{ padding: '0.35rem 0.65rem 0.35rem 1.8rem', fontSize: '0.78rem', height: 32, margin: 0 }}
+              style={{
+                padding: '0.35rem 0.65rem 0.35rem 1.8rem',
+                fontSize: '0.78rem',
+                height: 32,
+                margin: 0,
+                borderRadius: 6,
+                border: '1px solid #e2e8f0',
+                backgroundColor: '#ffffff'
+              }}
             />
             <Search size={13} style={{ position: 'absolute', left: 8, top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
           </div>
@@ -79,30 +85,30 @@ export const Students: React.FC<StudentsProps> = ({
             </button>
             <button
               type="button"
-              onClick={() => setFilterTier('CRITICAL')}
-              className={`segmented-btn ${filterTier === 'CRITICAL' ? 'active' : ''}`}
+              onClick={() => setFilterTier('SAFE')}
+              className={`segmented-btn ${filterTier === 'SAFE' ? 'active' : ''}`}
             >
-              &lt; 65%
+              ≥ 75%
             </button>
             <button
               type="button"
               onClick={() => setFilterTier('WARNING')}
               className={`segmented-btn ${filterTier === 'WARNING' ? 'active' : ''}`}
             >
-              65-74%
+              65–74%
             </button>
             <button
               type="button"
-              onClick={() => setFilterTier('SAFE')}
-              className={`segmented-btn ${filterTier === 'SAFE' ? 'active' : ''}`}
+              onClick={() => setFilterTier('CRITICAL')}
+              className={`segmented-btn ${filterTier === 'CRITICAL' ? 'active' : ''}`}
             >
-              ≥ 75%
+              &lt; 65%
             </button>
           </div>
         </div>
       </div>
 
-      {/* Tabler Table */}
+      {/* Table */}
       <div className="table-responsive">
         <table className="tabler-table">
           <thead>
@@ -112,15 +118,15 @@ export const Students: React.FC<StudentsProps> = ({
               <th>Parent / Guardian</th>
               <th>Contact Phone</th>
               <th>Attended / Total</th>
-              <th>Cumulative %</th>
-              <th style={{ textAlign: 'right' }}>Actions</th>
+              <th>Attendance</th>
+              <th style={{ textAlign: 'right' }}>Action</th>
             </tr>
           </thead>
           <tbody>
             {filteredStudents.length === 0 ? (
               <tr>
-                <td colSpan={7} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
-                  No students match the selected search or attendance criteria.
+                <td colSpan={7} style={{ textAlign: 'center', padding: '2.5rem', color: '#64748b' }}>
+                  No students found matching your criteria.
                 </td>
               </tr>
             ) : (
@@ -155,7 +161,6 @@ export const Students: React.FC<StudentsProps> = ({
                         setSelectedStudent(student);
                       }}
                       className="btn-tabler btn-tabler-outline btn-tabler-sm"
-                      title="Inspect Student Record"
                     >
                       <Eye size={13} /> View
                     </button>
@@ -180,7 +185,7 @@ export const Students: React.FC<StudentsProps> = ({
               </span>
             </div>
           }
-          subtitle={`VIIT Computer Science & Engineering • Section ${selectedStudent.section}`}
+          subtitle={`Section ${selectedStudent.section}`}
           footer={
             <button
               type="button"
@@ -194,45 +199,45 @@ export const Students: React.FC<StudentsProps> = ({
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
             {/* Stat Row */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.75rem' }}>
-              <div style={{ padding: '0.85rem', backgroundColor: '#f8fafc', borderRadius: 6, textAlign: 'center', border: '1px solid #e2e8f0' }}>
-                <div style={{ fontSize: '0.7rem', color: '#64748b', textTransform: 'uppercase', fontWeight: 600 }}>Attendance %</div>
+              <div style={{ padding: '0.85rem', backgroundColor: '#f8fafc', borderRadius: 6, textAlign: 'center', border: '1px solid #f1f5f9' }}>
+                <div style={{ fontSize: '0.7rem', color: '#64748b', textTransform: 'uppercase', fontWeight: 600 }}>Attendance</div>
                 <div style={{
                   fontSize: '1.35rem',
                   fontWeight: 700,
                   marginTop: '0.2rem',
-                  color: selectedStudent.attendancePercentage < 65 ? '#e11d48' : selectedStudent.attendancePercentage < 75 ? '#d97706' : '#0f766e'
+                  color: selectedStudent.attendancePercentage < 65 ? '#dc2626' : selectedStudent.attendancePercentage < 75 ? '#d97706' : '#0f766e'
                 }}>
                   {selectedStudent.attendancePercentage}%
                 </div>
               </div>
 
-              <div style={{ padding: '0.85rem', backgroundColor: '#f8fafc', borderRadius: 6, textAlign: 'center', border: '1px solid #e2e8f0' }}>
-                <div style={{ fontSize: '0.7rem', color: '#64748b', textTransform: 'uppercase', fontWeight: 600 }}>Attended Classes</div>
+              <div style={{ padding: '0.85rem', backgroundColor: '#f8fafc', borderRadius: 6, textAlign: 'center', border: '1px solid #f1f5f9' }}>
+                <div style={{ fontSize: '0.7rem', color: '#64748b', textTransform: 'uppercase', fontWeight: 600 }}>Classes</div>
                 <div style={{ fontSize: '1.35rem', fontWeight: 700, marginTop: '0.2rem', color: '#0f172a' }}>
                   {selectedStudent.attendedClasses} <span style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 400 }}>/ {selectedStudent.totalClasses}</span>
                 </div>
               </div>
 
-              <div style={{ padding: '0.85rem', backgroundColor: '#f8fafc', borderRadius: 6, textAlign: 'center', border: '1px solid #e2e8f0' }}>
-                <div style={{ fontSize: '0.7rem', color: '#64748b', textTransform: 'uppercase', fontWeight: 600 }}>Standing</div>
+              <div style={{ padding: '0.85rem', backgroundColor: '#f8fafc', borderRadius: 6, textAlign: 'center', border: '1px solid #f1f5f9' }}>
+                <div style={{ fontSize: '0.7rem', color: '#64748b', textTransform: 'uppercase', fontWeight: 600 }}>Status</div>
                 <div style={{ fontSize: '0.85rem', fontWeight: 600, marginTop: '0.45rem', color: '#0f766e' }}>
-                  Regular Enrolled
+                  Enrolled
                 </div>
               </div>
             </div>
 
             {/* Parent Contact */}
-            <div style={{ padding: '0.85rem 1rem', backgroundColor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 6 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.75rem', fontWeight: 600, color: '#0f766e', marginBottom: '0.5rem' }}>
-                <ShieldCheck size={14} /> Registered Guardian Details
+            <div style={{ padding: '0.85rem 1rem', backgroundColor: '#f8fafc', border: '1px solid #f1f5f9', borderRadius: 6 }}>
+              <div style={{ fontSize: '0.72rem', textTransform: 'uppercase', fontWeight: 600, color: '#64748b', marginBottom: '0.4rem' }}>
+                Parent / Guardian Contact
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', fontSize: '0.8rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', fontSize: '0.82rem' }}>
                 <div>
-                  <div style={{ fontSize: '0.7rem', color: '#64748b' }}>Parent / Guardian:</div>
+                  <div style={{ fontSize: '0.7rem', color: '#64748b' }}>Name:</div>
                   <strong style={{ color: '#0f172a' }}>{selectedStudent.parentName}</strong>
                 </div>
                 <div>
-                  <div style={{ fontSize: '0.7rem', color: '#64748b' }}>Phone Number:</div>
+                  <div style={{ fontSize: '0.7rem', color: '#64748b' }}>Phone:</div>
                   <strong style={{ color: '#0f766e', fontFamily: 'var(--font-mono)' }}>{selectedStudent.parentPhone}</strong>
                 </div>
               </div>
@@ -240,11 +245,8 @@ export const Students: React.FC<StudentsProps> = ({
 
             {/* Midterm Scores */}
             <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.78rem', fontWeight: 600, color: '#0f172a' }}>
-                  <GraduationCap size={15} color="#0f766e" /> Official Midterm Assessment Records
-                </div>
-                <span style={{ fontSize: '0.7rem', color: '#64748b' }}>Independent Table (`FR-05`)</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.82rem', fontWeight: 600, color: '#0f172a', marginBottom: '0.5rem' }}>
+                <GraduationCap size={15} color="#0f766e" /> Midterm Marks
               </div>
 
               {studentMarks.length === 0 ? (
@@ -259,7 +261,7 @@ export const Students: React.FC<StudentsProps> = ({
                         <th>Subject</th>
                         <th>Assessment</th>
                         <th>Marks Obtained</th>
-                        <th>Recorded Date</th>
+                        <th>Date</th>
                       </tr>
                     </thead>
                     <tbody>

@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
 import { 
   Inbox, 
-  CheckCircle2, 
   Clock, 
   Edit3, 
   Save 
 } from 'lucide-react';
-import { Card } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
 import { Modal } from '../components/ui/Modal';
 import { ParentQuery } from '../types';
@@ -53,10 +51,10 @@ export const ParentQueries: React.FC<ParentQueriesProps> = ({
       {/* Page Header */}
       <div className="page-header">
         <div>
-          <div className="page-pretitle">Coordinator Action Inbox</div>
-          <h1 className="page-title">Parent Inquiries & Follow-up Requests</h1>
+          <div className="page-pretitle">Coordinator Inbox</div>
+          <h1 className="page-title">Parent Inquiries</h1>
           <p className="page-description">
-            Captured by the AI voice assistant during attendance calls (`FR-10`). Assigned to section coordinators.
+            Parent questions and follow-up requests logged during daily outreach.
           </p>
         </div>
 
@@ -112,7 +110,7 @@ export const ParentQueries: React.FC<ParentQueriesProps> = ({
                   border: isPending ? '1px solid #fed7aa' : '1px solid #e2e8f0',
                   borderRadius: 8,
                   padding: '1.25rem',
-                  boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
+                  boxShadow: '0 1px 2px rgba(0,0,0,0.03)',
                   display: 'flex',
                   flexDirection: 'column',
                   justifyContent: 'space-between'
@@ -123,10 +121,10 @@ export const ParentQueries: React.FC<ParentQueriesProps> = ({
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                       <span className="roll-number">{query.studentRoll}</span>
                       <Badge variant={query.category === 'ATTENDANCE_DISPUTE' ? 'danger' : 'warning'}>
-                        {query.category}
+                        {query.category.replace('_', ' ')}
                       </Badge>
                     </div>
-                    <Badge variant={isResolved ? 'success' : isPending ? 'warning' : 'info'}>
+                    <Badge variant={isResolved ? 'success' : isPending ? 'warning' : 'teal'}>
                       {query.status}
                     </Badge>
                   </div>
@@ -153,12 +151,12 @@ export const ParentQueries: React.FC<ParentQueriesProps> = ({
                       marginTop: '0.65rem',
                       padding: '0.65rem 0.85rem',
                       backgroundColor: '#ecfdf5',
-                      border: '1px solid #a7f3d0',
+                      border: '1px solid #d1fae5',
                       borderRadius: 6,
                       fontSize: '0.75rem',
                       color: '#065f46'
                     }}>
-                      <strong>Resolution Note:</strong> {query.resolutionNotes}
+                      <strong>Note:</strong> {query.resolutionNotes}
                     </div>
                   )}
                 </div>
@@ -174,7 +172,7 @@ export const ParentQueries: React.FC<ParentQueriesProps> = ({
                   color: '#64748b'
                 }}>
                   <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                    <Clock size={12} /> Logged: {query.createdAt}
+                    <Clock size={12} /> {query.createdAt}
                   </span>
 
                   <button
@@ -182,7 +180,7 @@ export const ParentQueries: React.FC<ParentQueriesProps> = ({
                     onClick={() => handleOpenResolveModal(query)}
                     className="btn-tabler btn-tabler-outline btn-tabler-sm"
                   >
-                    <Edit3 size={12} /> Update Status
+                    <Edit3 size={12} /> Update
                   </button>
                 </div>
               </div>
@@ -196,8 +194,8 @@ export const ParentQueries: React.FC<ParentQueriesProps> = ({
         <Modal
           isOpen={!!selectedQuery}
           onClose={() => setSelectedQuery(null)}
-          title={`Update Parent Inquiry • ${selectedQuery.studentRoll}`}
-          subtitle={`Student: ${selectedQuery.studentName} • Coordinator: ${selectedQuery.assignedCoordinator}`}
+          title={`Update Inquiry • ${selectedQuery.studentRoll}`}
+          subtitle={`Student: ${selectedQuery.studentName}`}
           footer={
             <div style={{ display: 'flex', gap: '0.5rem' }}>
               <button
@@ -225,28 +223,28 @@ export const ParentQueries: React.FC<ParentQueriesProps> = ({
 
             <div>
               <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#334155', marginBottom: '0.35rem' }}>
-                Resolution Status
+                Status
               </label>
               <select
                 value={newStatus}
                 onChange={(e) => setNewStatus(e.target.value as any)}
                 style={{ fontSize: '0.78rem', padding: '0.4rem 0.65rem' }}
               >
-                <option value="PENDING">PENDING (Action Required)</option>
-                <option value="IN_PROGRESS">IN_PROGRESS (Coordinator Reviewing)</option>
-                <option value="RESOLVED">RESOLVED (Contacted Parent / Approved)</option>
+                <option value="PENDING">PENDING</option>
+                <option value="IN_PROGRESS">IN_PROGRESS</option>
+                <option value="RESOLVED">RESOLVED</option>
               </select>
             </div>
 
             <div>
               <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#334155', marginBottom: '0.35rem' }}>
-                Coordinator Action Notes & Follow-up Details
+                Resolution Notes
               </label>
               <textarea
                 rows={4}
                 value={resolutionNotes}
                 onChange={(e) => setResolutionNotes(e.target.value)}
-                placeholder="Document communication with parent, verification of bus log, or medical certificate guidelines provided..."
+                placeholder="Document follow-up notes or actions taken..."
                 style={{ fontSize: '0.78rem', padding: '0.65rem' }}
               />
             </div>

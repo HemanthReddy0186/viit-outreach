@@ -1,10 +1,6 @@
 import React, { useState } from 'react';
 import { 
-  PhoneCall, 
-  ShieldCheck, 
   Clock, 
-  UserCheck, 
-  MessageSquare,
   Play 
 } from 'lucide-react';
 import { Card } from '../components/ui/Card';
@@ -35,10 +31,10 @@ export const CallHistory: React.FC<CallHistoryProps> = ({
       {/* Page Header */}
       <div className="page-header">
         <div>
-          <div className="page-pretitle">Automated Voice Workflow</div>
-          <h1 className="page-title">AI Parent Outreach & Call Inspector</h1>
+          <div className="page-pretitle">Automated Communication</div>
+          <h1 className="page-title">Voice Outreach</h1>
           <p className="page-description">
-            Idempotent call orchestration (`FR-07`). Inspect recipient verification checkpoints and transcripts.
+            Parent attendance call records, verification status, and transcripts.
           </p>
         </div>
 
@@ -46,28 +42,10 @@ export const CallHistory: React.FC<CallHistoryProps> = ({
           <button
             type="button"
             onClick={onTriggerSimulation}
-            className="btn-tabler btn-tabler-primary"
+            className="btn-tabler btn-tabler-primary btn-tabler-sm"
           >
-            <Play size={14} /> Run Outreach Simulation Loop
+            <Play size={13} /> Simulate Calls
           </button>
-        </div>
-      </div>
-
-      {/* Safety Banner */}
-      <div className="institution-banner">
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <ShieldCheck size={18} color="#0f766e" />
-            <span style={{ fontSize: '0.8rem', color: '#0f766e', fontWeight: 600 }}>
-              Telephony Guard Active
-            </span>
-            <span style={{ fontSize: '0.78rem', color: '#475569' }}>
-              Phase 1 simulated audio loop. No carrier connections or outbound dialing.
-            </span>
-          </div>
-          <span className="status-pill status-pill-teal" style={{ fontFamily: 'var(--font-mono)' }}>
-            Deterministic State Machine
-          </span>
         </div>
       </div>
 
@@ -114,7 +92,7 @@ export const CallHistory: React.FC<CallHistoryProps> = ({
                     padding: '0.85rem 1rem',
                     backgroundColor: isSelected ? '#f0fdfa' : '#ffffff',
                     border: isSelected ? '1px solid #0f766e' : '1px solid #e2e8f0',
-                    borderRadius: 8,
+                    borderRadius: 6,
                     cursor: 'pointer',
                     transition: 'all 0.15s ease'
                   }}
@@ -146,7 +124,7 @@ export const CallHistory: React.FC<CallHistoryProps> = ({
                       <Clock size={12} /> {call.durationSeconds}s
                     </span>
                     {call.queryLogged && (
-                      <span style={{ color: '#b45309', fontWeight: 600 }}>Query Logged</span>
+                      <span style={{ color: '#b45309', fontWeight: 600 }}>Inquiry Logged</span>
                     )}
                   </div>
                 </div>
@@ -161,37 +139,37 @@ export const CallHistory: React.FC<CallHistoryProps> = ({
             <Card
               title={
                 <div>
-                  <div style={{ fontSize: '0.72rem', color: '#64748b', textTransform: 'uppercase', fontWeight: 600 }}>
-                    Session Transcript
+                  <div style={{ fontSize: '0.7rem', color: '#64748b', textTransform: 'uppercase', fontWeight: 600 }}>
+                    Call Transcript
                   </div>
                   <div style={{ fontSize: '1rem', fontWeight: 700, color: '#0f172a' }}>
                     {activeCall.studentName} ({activeCall.studentRoll})
                   </div>
                 </div>
               }
-              subtitle={`Parent: ${activeCall.parentName} • ${activeCall.parentPhone} • Duration: ${activeCall.durationSeconds}s`}
+              subtitle={`Parent: ${activeCall.parentName} • ${activeCall.parentPhone}`}
             >
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                {/* Safeguard Indicators */}
+                {/* Status Indicators */}
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem' }}>
-                  <div style={{ padding: '0.65rem', backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 6 }}>
-                    <div style={{ fontSize: '0.68rem', color: '#64748b', textTransform: 'uppercase' }}>Recipient ID</div>
+                  <div style={{ padding: '0.65rem', backgroundColor: '#f8fafc', border: '1px solid #f1f5f9', borderRadius: 6 }}>
+                    <div style={{ fontSize: '0.68rem', color: '#64748b', textTransform: 'uppercase' }}>Recipient</div>
                     <strong style={{ fontSize: '0.78rem', color: activeCall.recipientVerified ? '#0f766e' : '#64748b' }}>
-                      {activeCall.recipientVerified ? 'Verified Guardian' : 'Unverified'}
+                      {activeCall.recipientVerified ? 'Verified' : 'Unverified'}
                     </strong>
                   </div>
 
-                  <div style={{ padding: '0.65rem', backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 6 }}>
+                  <div style={{ padding: '0.65rem', backgroundColor: '#f8fafc', border: '1px solid #f1f5f9', borderRadius: 6 }}>
                     <div style={{ fontSize: '0.68rem', color: '#64748b', textTransform: 'uppercase' }}>Midterm Marks</div>
                     <strong style={{ fontSize: '0.78rem', color: activeCall.marksDisclosed ? '#0f766e' : '#64748b' }}>
-                      {activeCall.marksDisclosed ? 'Consent Disclosed' : 'Not Disclosed'}
+                      {activeCall.marksDisclosed ? 'Shared' : 'Not Shared'}
                     </strong>
                   </div>
 
-                  <div style={{ padding: '0.65rem', backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 6 }}>
-                    <div style={{ fontSize: '0.68rem', color: '#64748b', textTransform: 'uppercase' }}>Inquiry Logged</div>
+                  <div style={{ padding: '0.65rem', backgroundColor: '#f8fafc', border: '1px solid #f1f5f9', borderRadius: 6 }}>
+                    <div style={{ fontSize: '0.68rem', color: '#64748b', textTransform: 'uppercase' }}>Inquiry</div>
                     <strong style={{ fontSize: '0.78rem', color: activeCall.queryLogged ? '#b45309' : '#64748b' }}>
-                      {activeCall.queryLogged ? 'Yes' : 'None'}
+                      {activeCall.queryLogged ? 'Recorded' : 'None'}
                     </strong>
                   </div>
                 </div>
@@ -205,8 +183,8 @@ export const CallHistory: React.FC<CallHistoryProps> = ({
                     borderRadius: 6,
                     fontSize: '0.78rem'
                   }}>
-                    <strong style={{ color: '#92400e' }}>Captured Parent Question for Coordinator:</strong>
-                    <div style={{ color: '#475569', marginTop: '0.2rem', fontStyle: 'italic' }}>
+                    <strong style={{ color: '#92400e' }}>Parent Inquiry:</strong>
+                    <div style={{ color: '#475569', marginTop: '0.2rem' }}>
                       "{activeCall.querySummary}"
                     </div>
                   </div>
@@ -214,8 +192,8 @@ export const CallHistory: React.FC<CallHistoryProps> = ({
 
                 {/* Speech Transcript */}
                 <div>
-                  <div style={{ fontSize: '0.72rem', fontWeight: 700, textTransform: 'uppercase', color: '#64748b', marginBottom: '0.5rem' }}>
-                    Dialogue Log
+                  <div style={{ fontSize: '0.72rem', fontWeight: 600, textTransform: 'uppercase', color: '#64748b', marginBottom: '0.5rem' }}>
+                    Conversation
                   </div>
 
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
@@ -229,14 +207,14 @@ export const CallHistory: React.FC<CallHistoryProps> = ({
                             alignSelf: isAI ? 'flex-start' : 'flex-end',
                             maxWidth: '85%',
                             backgroundColor: isAI ? '#f8fafc' : '#f0fdfa',
-                            border: isAI ? '1px solid #e2e8f0' : '1px solid #99f6e4',
-                            borderRadius: 8,
+                            border: isAI ? '1px solid #e2e8f0' : '1px solid #ccfbf1',
+                            borderRadius: 6,
                             padding: '0.65rem 0.85rem'
                           }}
                         >
-                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.68rem', color: '#64748b', marginBottom: '0.25rem' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.68rem', color: '#64748b', marginBottom: '0.2rem' }}>
                             <strong style={{ color: isAI ? '#0f766e' : '#0369a1' }}>{line.speaker}</strong>
-                            <span>{line.time}</span>
+                            <span style={{ fontFamily: 'var(--font-mono)' }}>{line.time}</span>
                           </div>
                           <div style={{ fontSize: '0.8rem', color: '#1e293b', lineHeight: 1.4 }}>
                             {line.text}
@@ -251,7 +229,7 @@ export const CallHistory: React.FC<CallHistoryProps> = ({
           ) : (
             <Card>
               <div style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
-                Select a call from the left to inspect its dialogue transcript.
+                Select a call from the list to view its transcript.
               </div>
             </Card>
           )}

@@ -5,10 +5,8 @@ import {
   PhoneCall, 
   AlertTriangle, 
   ArrowRight, 
-  Calendar, 
-  Upload, 
-  Clock,
-  ExternalLink
+  CalendarCheck, 
+  UploadCloud 
 } from 'lucide-react';
 import { StatCard } from '../components/ui/StatCard';
 import { Card } from '../components/ui/Card';
@@ -56,13 +54,13 @@ export const Dashboard: React.FC<DashboardProps> = ({
 
   return (
     <div>
-      {/* Tabler Page Header */}
+      {/* Page Header */}
       <div className="page-header">
         <div>
-          <div className="page-pretitle">CSE Department • Section {selectedSection}</div>
-          <h1 className="page-title">Attendance & Outreach Dashboard</h1>
+          <div className="page-pretitle">Section {selectedSection} Overview</div>
+          <h1 className="page-title">Dashboard</h1>
           <p className="page-description">
-            Faculty monitoring for daily attendance, Excel roster sync, and automated parent communication.
+            Daily attendance status and parent communication for {selectedDate}.
           </p>
         </div>
 
@@ -72,64 +70,47 @@ export const Dashboard: React.FC<DashboardProps> = ({
             onClick={() => onNavigate('attendance')}
             className="btn-tabler btn-tabler-primary"
           >
-            <Calendar size={14} /> Mark Attendance
+            <CalendarCheck size={14} /> Mark Attendance
           </button>
           <button
             type="button"
             onClick={() => onNavigate('import')}
             className="btn-tabler btn-tabler-outline"
           >
-            <Upload size={14} /> Excel Sync
+            <UploadCloud size={14} /> Import Excel
           </button>
         </div>
       </div>
 
-      {/* Institutional Information Banner */}
-      <div className="institution-banner">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem' }}>
-          <div>
-            <strong style={{ color: '#0f766e', fontSize: '0.85rem' }}>
-              Vignan's Institute of Information Technology (Autonomous)
-            </strong>
-            <p style={{ margin: '0.2rem 0 0 0', fontSize: '0.75rem', color: '#475569' }}>
-              Current Session: II B.Tech I Sem • Academic Date: <strong style={{ color: '#0f172a' }}>{selectedDate}</strong> • Coordinator: Dr. K. Srinivasa Rao
-            </p>
-          </div>
-          <span className="status-pill status-pill-teal">
-            Phase 1 Prototype • Simulated Calling
-          </span>
-        </div>
-      </div>
-
-      {/* Tabler Metric Cards */}
+      {/* Metric Cards */}
       <div className="metrics-grid">
         <StatCard
-          title="Today's Attendance Rate"
+          title="Attendance Rate"
           value={`${todayAttendanceRate}%`}
-          subtitle={`${presentCount} present of ${totalStudents} students`}
+          subtitle={`${presentCount} of ${totalStudents} present`}
           icon={CheckCircle2}
           trend={{ value: `${presentCount}/${totalStudents}`, positive: absenteeCount === 0 }}
         />
 
         <StatCard
-          title="Absentees Requiring Call"
+          title="Absentees Today"
           value={absenteeCount}
-          subtitle={`Section ${selectedSection} confirmed on ${selectedDate}`}
+          subtitle={`Section ${selectedSection}`}
           icon={UserX}
           trend={{ value: `${absenteeCount} absent`, positive: false }}
         />
 
         <StatCard
-          title="Parent Voice Calls"
+          title="Parent Calls"
           value={callTasks.length}
-          subtitle={`${callTasks.filter(c => c.status === 'COMPLETED').length} verified & completed`}
+          subtitle={`${callTasks.filter(c => c.status === 'COMPLETED').length} completed`}
           icon={PhoneCall}
         />
 
         <StatCard
-          title="Pending Parent Queries"
+          title="Pending Inquiries"
           value={pendingQueries.length}
-          subtitle={`${queries.length} total logged by assistant`}
+          subtitle="Requires follow-up"
           icon={AlertTriangle}
           trend={{ value: `${pendingQueries.length} pending`, positive: pendingQueries.length === 0 }}
         />
@@ -141,8 +122,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
           {/* Today's Absentees */}
           <Card
-            title={`Today's Absentees Roster (${selectedDate})`}
-            subtitle="Faculty review confirmed absentees before scheduling automated parent outreach"
+            title={`Absentees (${absenteeCount})`}
             action={
               <div style={{ display: 'flex', gap: '0.5rem' }}>
                 <button
@@ -150,23 +130,23 @@ export const Dashboard: React.FC<DashboardProps> = ({
                   onClick={onTriggerCallSimulation}
                   className="btn-tabler btn-tabler-primary btn-tabler-sm"
                 >
-                  <PhoneCall size={13} /> Simulate Parent Calls
+                  <PhoneCall size={13} /> Run Parent Calls
                 </button>
                 <button
                   type="button"
                   onClick={() => onNavigate('attendance')}
                   className="btn-tabler btn-tabler-outline btn-tabler-sm"
                 >
-                  Full Roster <ArrowRight size={13} />
+                  Roster <ArrowRight size={13} />
                 </button>
               </div>
             }
           >
             {todayAbsentees.length === 0 ? (
               <div style={{ textAlign: 'center', padding: '2rem 1rem', color: '#64748b' }}>
-                <CheckCircle2 size={32} color="#0f766e" style={{ margin: '0 auto 0.5rem auto' }} />
-                <p style={{ margin: 0, fontWeight: 600, color: '#0f172a' }}>All students present today!</p>
-                <p style={{ margin: '0.25rem 0 0 0', fontSize: '0.75rem' }}>Zero absentees recorded for Section {selectedSection}.</p>
+                <CheckCircle2 size={28} color="#0f766e" style={{ margin: '0 auto 0.5rem auto' }} />
+                <p style={{ margin: 0, fontWeight: 600, color: '#0f172a', fontSize: '0.9rem' }}>All students present today</p>
+                <p style={{ margin: '0.2rem 0 0 0', fontSize: '0.75rem' }}>No absentees recorded for Section {selectedSection}.</p>
               </div>
             ) : (
               <div className="table-responsive">
@@ -174,10 +154,10 @@ export const Dashboard: React.FC<DashboardProps> = ({
                   <thead>
                     <tr>
                       <th>Roll Number</th>
-                      <th>Student Name</th>
-                      <th>Cumulative %</th>
-                      <th>Parent / Phone</th>
-                      <th>Outreach Status</th>
+                      <th>Student</th>
+                      <th>Attendance</th>
+                      <th>Parent Contact</th>
+                      <th>Status</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -204,7 +184,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                                 {call.status}
                               </Badge>
                             ) : (
-                              <Badge variant="danger">PENDING CALL</Badge>
+                              <Badge variant="danger">PENDING</Badge>
                             )}
                           </td>
                         </tr>
@@ -218,15 +198,14 @@ export const Dashboard: React.FC<DashboardProps> = ({
 
           {/* Recent Transcripts */}
           <Card
-            title="Recent AI Call Transcripts (Simulated)"
-            subtitle="Verification of parent identity, absentee status, and marks inquiry"
+            title="Recent Parent Calls"
             action={
               <button
                 type="button"
                 onClick={() => onNavigate('calls')}
                 className="btn-tabler btn-tabler-outline btn-tabler-sm"
               >
-                Call Log <ArrowRight size={13} />
+                View All <ArrowRight size={13} />
               </button>
             }
           >
@@ -235,24 +214,24 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 <div key={call.id} style={{
                   padding: '0.85rem',
                   borderRadius: 6,
-                  border: '1px solid #e2e8f0',
+                  border: '1px solid #f1f5f9',
                   backgroundColor: '#f8fafc'
                 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.35rem' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                       <span className="roll-number">{call.studentRoll}</span>
-                      <strong style={{ fontSize: '0.8rem' }}>{call.studentName}</strong>
+                      <strong style={{ fontSize: '0.82rem', color: '#0f172a' }}>{call.studentName}</strong>
                     </div>
                     <Badge variant={call.status === 'COMPLETED' ? 'success' : 'warning'}>{call.status}</Badge>
                   </div>
 
                   <div style={{ fontSize: '0.78rem', color: '#334155', lineHeight: 1.4 }}>
-                    <div style={{ marginBottom: '0.25rem' }}>
-                      <strong style={{ color: '#0f766e' }}>AI Assistant:</strong> {call.transcript[0]?.text}
+                    <div style={{ marginBottom: '0.2rem' }}>
+                      <strong style={{ color: '#0f766e' }}>Assistant:</strong> {call.transcript[0]?.text}
                     </div>
                     {call.transcript[1] && (
                       <div>
-                        <strong style={{ color: '#334155' }}>Parent:</strong> {call.transcript[1]?.text}
+                        <strong style={{ color: '#475569' }}>Parent:</strong> {call.transcript[1]?.text}
                       </div>
                     )}
                   </div>
@@ -264,15 +243,12 @@ export const Dashboard: React.FC<DashboardProps> = ({
 
         {/* Right Column */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-          {/* Statutory Thresholds */}
-          <Card
-            title="Attendance Health Standing"
-            subtitle="University criterion: Minimum 75% required for semester examination eligibility"
-          >
+          {/* Attendance Health Standing */}
+          <Card title="Attendance Distribution">
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', marginBottom: '0.35rem' }}>
-                  <span style={{ color: '#065f46', fontWeight: 600 }}>Safe Standing (≥ 75%)</span>
+                  <span style={{ color: '#065f46', fontWeight: 600 }}>Safe (≥ 75%)</span>
                   <strong>{safeCount} Students ({((safeCount / totalStudents) * 100).toFixed(0)}%)</strong>
                 </div>
                 <div className="attendance-progress-track">
@@ -282,7 +258,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
 
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', marginBottom: '0.35rem' }}>
-                  <span style={{ color: '#92400e', fontWeight: 600 }}>Condonation Zone (65%–74%)</span>
+                  <span style={{ color: '#92400e', fontWeight: 600 }}>Condonation (65%–74%)</span>
                   <strong>{condonationCount} Students ({((condonationCount / totalStudents) * 100).toFixed(0)}%)</strong>
                 </div>
                 <div className="attendance-progress-track">
@@ -292,31 +268,26 @@ export const Dashboard: React.FC<DashboardProps> = ({
 
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', marginBottom: '0.35rem' }}>
-                  <span style={{ color: '#9f1239', fontWeight: 600 }}>Detention Risk (&lt; 65%)</span>
+                  <span style={{ color: '#991b1b', fontWeight: 600 }}>Detention Risk (&lt; 65%)</span>
                   <strong>{criticalCount} Students ({((criticalCount / totalStudents) * 100).toFixed(0)}%)</strong>
                 </div>
                 <div className="attendance-progress-track">
-                  <div className="attendance-progress-fill" style={{ width: `${(criticalCount / totalStudents) * 100}%`, backgroundColor: '#e11d48' }} />
+                  <div className="attendance-progress-fill" style={{ width: `${(criticalCount / totalStudents) * 100}%`, backgroundColor: '#dc2626' }} />
                 </div>
               </div>
             </div>
-
-            <div style={{ marginTop: '1rem', padding: '0.65rem 0.85rem', backgroundColor: '#f8fafc', borderRadius: 6, fontSize: '0.72rem', color: '#64748b' }}>
-              <strong>Institutional Guideline:</strong> Students below 65% are flagged for mandatory parent consultation before midterm exams.
-            </div>
           </Card>
 
-          {/* Pending Queries Preview */}
+          {/* Pending Inquiries */}
           <Card
-            title="Coordinator Action Queue"
-            subtitle={`${pendingQueries.length} parent inquiries pending review`}
+            title={`Pending Inquiries (${pendingQueries.length})`}
             action={
               <button
                 type="button"
                 onClick={() => onNavigate('queries')}
                 className="btn-tabler btn-tabler-outline btn-tabler-sm"
               >
-                Go to Inbox <ArrowRight size={13} />
+                Inbox <ArrowRight size={13} />
               </button>
             }
           >
@@ -334,7 +305,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                   }}
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.25rem' }}>
-                    <Badge variant="warning">{q.category}</Badge>
+                    <Badge variant="warning">{q.category.replace('_', ' ')}</Badge>
                     <span style={{ fontSize: '0.7rem', color: '#92400e', fontFamily: 'var(--font-mono)' }}>
                       {q.createdAt.split(' ')[1]} {q.createdAt.split(' ')[2]}
                     </span>
@@ -342,7 +313,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                   <div style={{ fontSize: '0.8rem', fontWeight: 600, color: '#0f172a' }}>
                     {q.studentRoll} • {q.studentName}
                   </div>
-                  <div style={{ fontSize: '0.74rem', color: '#475569', marginTop: '0.2rem', lineHeight: 1.3 }}>
+                  <div style={{ fontSize: '0.75rem', color: '#475569', marginTop: '0.2rem', lineHeight: 1.3 }}>
                     "{q.summary}"
                   </div>
                 </div>

@@ -1,10 +1,5 @@
 import React from 'react';
-import { 
-  Search, 
-  Calendar, 
-  ShieldCheck, 
-  UserCheck 
-} from 'lucide-react';
+import { Search } from 'lucide-react';
 
 interface TopbarProps {
   currentTab: string;
@@ -17,7 +12,6 @@ interface TopbarProps {
 }
 
 export const Topbar: React.FC<TopbarProps> = ({
-  currentTab,
   selectedDate,
   onDateChange,
   selectedSection,
@@ -27,32 +21,34 @@ export const Topbar: React.FC<TopbarProps> = ({
 }) => {
   return (
     <header className="app-topbar">
-      {/* Left side: Context badge */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-        <span className="status-pill status-pill-teal" style={{ fontSize: '0.75rem' }}>
-          <ShieldCheck size={13} />
-          Authorized Staff Portal
+      {/* Left side: Clean context title */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+        <span style={{ fontSize: '0.82rem', fontWeight: 600, color: '#334155' }}>
+          Department of CSE
         </span>
-        <span style={{ fontSize: '0.78rem', color: '#64748b' }}>
-          CSE • II B.Tech
+        <span style={{ color: '#cbd5e1' }}>•</span>
+        <span style={{ fontSize: '0.8rem', color: '#64748b' }}>
+          Academic Year 2026–27
         </span>
       </div>
 
-      {/* Right side: Search, Section, Date, Profile */}
+      {/* Right side: Search, Section Toggle, Date, User Profile */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
         {/* Search */}
-        <div style={{ position: 'relative', width: 200 }}>
+        <div style={{ position: 'relative', width: 190 }}>
           <input
             type="search"
-            placeholder="Search roll / student..."
+            placeholder="Search student..."
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
             style={{
               padding: '0.35rem 0.65rem 0.35rem 1.8rem',
-              fontSize: '0.75rem',
+              fontSize: '0.78rem',
               height: 32,
               margin: 0,
-              borderRadius: 6
+              borderRadius: 6,
+              border: '1px solid #e2e8f0',
+              backgroundColor: '#f8fafc'
             }}
           />
           <Search size={13} style={{ position: 'absolute', left: 8, top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
@@ -77,17 +73,19 @@ export const Topbar: React.FC<TopbarProps> = ({
         </div>
 
         {/* Date Selector */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+        <div>
           <input
             type="date"
             value={selectedDate}
             onChange={(e) => onDateChange(e.target.value)}
             style={{
               padding: '0.35rem 0.6rem',
-              fontSize: '0.75rem',
+              fontSize: '0.78rem',
               height: 32,
               margin: 0,
               borderRadius: 6,
+              border: '1px solid #e2e8f0',
+              backgroundColor: '#f8fafc',
               fontFamily: 'var(--font-mono)'
             }}
           />
@@ -99,14 +97,15 @@ export const Topbar: React.FC<TopbarProps> = ({
           alignItems: 'center',
           gap: '0.5rem',
           paddingLeft: '0.75rem',
-          borderLeft: '1px solid #e2e8f0'
+          borderLeft: '1px solid #f1f5f9'
         }}>
           <div style={{
             width: 28,
             height: 28,
             borderRadius: '50%',
-            backgroundColor: '#0f766e',
-            color: '#ffffff',
+            backgroundColor: '#f0fdfa',
+            color: '#0f766e',
+            border: '1px solid #ccfbf1',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',

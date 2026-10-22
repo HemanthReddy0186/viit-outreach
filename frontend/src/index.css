@@ -1,29 +1,38 @@
-/* Tabler Design System + VIIT Identity Tokens */
+/* ==========================================================================
+   VIIT Outreach — Simple, Clean & Classy Design System
+   Primary UI: Pico CSS v2
+   Dashboard Inspiration: Tabler UI (tabler.io)
+   ========================================================================== */
+
 :root {
-  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  
-  /* Restrained Forest Green / Teal Institutional Theme */
+  --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
+  /* Refined Institutional Color Palette (Forest Teal & Warm Neutrals) */
   --pico-primary: #0f766e;
   --pico-primary-background: #0f766e;
   --pico-primary-hover: #115e59;
-  --pico-primary-focus: rgba(15, 118, 110, 0.2);
+  --pico-primary-focus: rgba(15, 118, 110, 0.15);
   --pico-primary-inverse: #ffffff;
-  
-  /* Warm Neutral Administrative Canvas */
-  --pico-background-color: #f6f8fb;
+
+  /* Clean Light Canvas */
+  --pico-background-color: #f8fafc;
   --pico-card-background-color: #ffffff;
   --pico-card-border-color: #e2e8f0;
-  --pico-color: #1e293b;
+  --pico-color: #0f172a;
   --pico-muted-color: #64748b;
   --pico-border-color: #e2e8f0;
-  
-  /* Layout Dimensions */
-  --sidebar-width: 256px;
-  --header-height: 60px;
+
+  /* Dimensions */
+  --sidebar-width: 240px;
+  --header-height: 58px;
 }
 
-/* Global Reset & Typography */
+/* Global Reset & Smooth Typography */
+* {
+  box-sizing: border-box;
+}
+
 body {
   font-family: var(--font-family);
   background-color: var(--pico-background-color);
@@ -32,9 +41,10 @@ body {
   padding: 0;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Tabler-inspired Layout System */
+/* Application Layout */
 .app-layout {
   display: flex;
   min-height: 100vh;
@@ -75,11 +85,10 @@ body {
 }
 
 .content-container {
-  max-width: 1280px;
+  max-width: 1200px;
   width: 100%;
   margin: 0 auto;
-  padding: 1.5rem 1.5rem 3rem 1.5rem;
-  box-sizing: border-box;
+  padding: 1.75rem 1.5rem 3rem 1.5rem;
 }
 
 /* Tabler Page Header */
@@ -102,8 +111,9 @@ body {
   font-size: 0.72rem;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
   color: var(--pico-muted-color);
+  margin-bottom: 0.15rem;
 }
 
 .page-title {
@@ -111,13 +121,14 @@ body {
   font-weight: 700;
   color: #0f172a;
   margin: 0;
-  letter-spacing: -0.015em;
+  letter-spacing: -0.02em;
 }
 
 .page-description {
-  font-size: 0.8rem;
+  font-size: 0.82rem;
   color: var(--pico-muted-color);
-  margin-top: 0.15rem;
+  margin-top: 0.2rem;
+  margin-bottom: 0;
 }
 
 /* Tabler Card Presentation */
@@ -125,7 +136,7 @@ body {
   background: #ffffff;
   border: 1px solid var(--pico-border-color);
   border-radius: 8px;
-  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.03);
   margin-bottom: 1.25rem;
   overflow: hidden;
 }
@@ -136,10 +147,11 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  background-color: #ffffff;
 }
 
 .tabler-card-title {
-  font-size: 0.95rem;
+  font-size: 0.92rem;
   font-weight: 600;
   color: #0f172a;
   margin: 0;
@@ -149,7 +161,7 @@ body {
   padding: 1.25rem;
 }
 
-/* Tabler Metric Presentation */
+/* Metric Cards Grid */
 .metrics-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -162,18 +174,35 @@ body {
   border: 1px solid var(--pico-border-color);
   border-radius: 8px;
   padding: 1.15rem 1.25rem;
-  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.03);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.metric-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .metric-card-label {
   font-size: 0.72rem;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--pico-muted-color);
+  letter-spacing: 0.05em;
+  color: #64748b;
+}
+
+.metric-icon-wrap {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
+  background-color: #f0fdfa;
+  color: #0f766e;
 }
 
 .metric-card-value {
@@ -182,14 +211,16 @@ body {
   color: #0f172a;
   margin: 0.35rem 0 0.15rem 0;
   letter-spacing: -0.02em;
+  line-height: 1.2;
 }
 
 .metric-card-subtext {
   font-size: 0.75rem;
-  color: var(--pico-muted-color);
+  color: #64748b;
+  margin-top: 0.2rem;
 }
 
-/* Clean, Human-Designed Status Badges */
+/* Status Badges */
 .status-pill {
   display: inline-flex;
   align-items: center;
@@ -197,38 +228,38 @@ body {
   font-size: 0.72rem;
   font-weight: 600;
   padding: 0.2rem 0.55rem;
-  border-radius: 9999px;
-  line-height: 1;
+  border-radius: 4px;
+  line-height: 1.2;
 }
 
 .status-pill-success {
   background-color: #ecfdf5;
   color: #065f46;
-  border: 1px solid #a7f3d0;
+  border: 1px solid #d1fae5;
 }
 
 .status-pill-danger {
-  background-color: #fff1f2;
-  color: #9f1239;
-  border: 1px solid #fecdd3;
+  background-color: #fef2f2;
+  color: #991b1b;
+  border: 1px solid #fee2e2;
 }
 
 .status-pill-warning {
   background-color: #fffbeb;
   color: #92400e;
-  border: 1px solid #fde68a;
+  border: 1px solid #fef3c7;
 }
 
 .status-pill-teal {
   background-color: #f0fdfa;
   color: #0f766e;
-  border: 1px solid #99f6e4;
+  border: 1px solid #ccfbf1;
 }
 
 .status-pill-neutral {
-  background-color: #f1f5f9;
+  background-color: #f8fafc;
   color: #475569;
-  border: 1px solid #cbd5e1;
+  border: 1px solid #e2e8f0;
 }
 
 /* Tabler Table Styling */
@@ -266,7 +297,7 @@ body {
 }
 
 .tabler-table tbody tr:hover {
-  background-color: #f8fafc;
+  background-color: #fafbfc;
 }
 
 .tabler-table tbody tr:last-child td {
@@ -279,24 +310,24 @@ body {
   color: #0f766e;
 }
 
-/* Sidebar Navigation Links */
+/* Sidebar Navigation */
 .sidebar-nav-link {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.65rem;
   padding: 0.55rem 0.85rem;
   border-radius: 6px;
   color: #475569;
   font-size: 0.82rem;
   font-weight: 500;
   text-decoration: none;
-  transition: background-color 0.15s ease, color 0.15s ease;
+  transition: all 0.15s ease;
   margin-bottom: 0.15rem;
   cursor: pointer;
 }
 
 .sidebar-nav-link:hover {
-  background-color: #f1f5f9;
+  background-color: #f8fafc;
   color: #0f172a;
 }
 
@@ -304,23 +335,24 @@ body {
   background-color: #f0fdfa;
   color: #0f766e;
   font-weight: 600;
-  border-left: 3px solid #0f766e;
 }
 
-/* Action Buttons */
+/* Tabler Buttons */
 .btn-tabler {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.4rem;
   font-size: 0.8rem;
   font-weight: 600;
-  padding: 0.45rem 0.9rem;
+  padding: 0.45rem 0.85rem;
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.15s ease;
   border: 1px solid transparent;
   line-height: 1.25;
   margin-bottom: 0;
+  text-decoration: none;
 }
 
 .btn-tabler-primary {
@@ -332,6 +364,7 @@ body {
 .btn-tabler-primary:hover {
   background-color: #115e59;
   border-color: #115e59;
+  color: #ffffff;
 }
 
 .btn-tabler-outline {
@@ -347,13 +380,14 @@ body {
 }
 
 .btn-tabler-danger {
-  background-color: #e11d48;
+  background-color: #dc2626;
   color: #ffffff;
-  border-color: #e11d48;
+  border-color: #dc2626;
 }
 
 .btn-tabler-danger:hover {
-  background-color: #be123c;
+  background-color: #b91c1c;
+  color: #ffffff;
 }
 
 .btn-tabler-sm {
@@ -361,16 +395,7 @@ body {
   font-size: 0.75rem;
 }
 
-/* Filter Controls Toolbar */
-.toolbar-bar {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  margin-bottom: 1rem;
-}
-
+/* Segmented Control / Pill Filters */
 .segmented-control {
   display: inline-flex;
   background: #f1f5f9;
@@ -380,16 +405,20 @@ body {
 }
 
 .segmented-btn {
-  padding: 0.3rem 0.75rem;
+  padding: 0.28rem 0.7rem;
   font-size: 0.75rem;
   font-weight: 500;
   border: none;
   background: transparent;
-  color: #475569;
+  color: #64748b;
   border-radius: 4px;
   cursor: pointer;
-  transition: background-color 0.15s ease, color 0.15s ease;
+  transition: all 0.15s ease;
   margin-bottom: 0;
+}
+
+.segmented-btn:hover {
+  color: #0f172a;
 }
 
 .segmented-btn.active {
@@ -399,21 +428,24 @@ body {
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
-/* Institutional Banner */
-.institution-banner {
-  background: #f0fdfa;
-  border: 1px solid #ccfbf1;
-  border-left: 4px solid #0f766e;
-  padding: 1rem 1.25rem;
+/* Subtle Notice Card (Clean & understated) */
+.subtle-hint {
+  padding: 0.65rem 0.9rem;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
   border-radius: 6px;
-  margin-bottom: 1.5rem;
+  font-size: 0.75rem;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 /* Progress bar */
 .attendance-progress-track {
   width: 100%;
   height: 6px;
-  background-color: #e2e8f0;
+  background-color: #f1f5f9;
   border-radius: 9999px;
   overflow: hidden;
 }
@@ -424,11 +456,11 @@ body {
   transition: width 0.3s ease;
 }
 
-/* Dialog / Modal Window */
+/* Modal Window */
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background-color: rgba(15, 23, 42, 0.45);
+  background-color: rgba(15, 23, 42, 0.4);
   backdrop-filter: blur(2px);
   display: flex;
   align-items: center;
@@ -440,9 +472,9 @@ body {
 .modal-dialog {
   background: #ffffff;
   border: 1px solid var(--pico-border-color);
-  border-radius: 10px;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  max-width: 650px;
+  border-radius: 8px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
+  max-width: 600px;
   width: 100%;
   max-height: 90vh;
   display: flex;
@@ -474,20 +506,32 @@ body {
   gap: 0.5rem;
 }
 
-/* Toast Message */
+/* Toast Notice */
 .toast-notice {
   position: fixed;
-  top: 1rem;
+  top: 1.25rem;
   right: 1.5rem;
   z-index: 2000;
   background: #0f766e;
   color: #ffffff;
-  padding: 0.65rem 1.15rem;
+  padding: 0.6rem 1rem;
   border-radius: 6px;
   font-size: 0.8rem;
   font-weight: 500;
-  box-shadow: 0 10px 15px -3px rgba(15, 118, 110, 0.25);
+  box-shadow: 0 10px 15px -3px rgba(15, 118, 110, 0.2);
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  animation: slideIn 0.2s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

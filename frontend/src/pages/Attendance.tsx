@@ -4,12 +4,12 @@ import {
   XCircle, 
   UserX, 
   PhoneCall, 
-  AlertCircle, 
   Search, 
-  Check 
+  Check,
+  Users
 } from 'lucide-react';
 import { Card } from '../components/ui/Card';
-import { Badge } from '../components/ui/Badge';
+import { StatCard } from '../components/ui/StatCard';
 import { Modal } from '../components/ui/Modal';
 import { Student, AttendanceRecord } from '../types';
 
@@ -96,16 +96,20 @@ export const Attendance: React.FC<AttendanceProps> = ({
   const currentAbsentees = sectionStudents.filter(
     s => getStatusForStudent(s.id) === 'ABSENT'
   );
+  const presentCount = sectionStudents.length - currentAbsentees.length;
+  const attendanceRate = sectionStudents.length > 0 
+    ? ((presentCount / sectionStudents.length) * 100).toFixed(1)
+    : '0.0';
 
   return (
     <div>
       {/* Header */}
       <div className="page-header">
         <div>
-          <div className="page-pretitle">Daily Operations • {selectedDate}</div>
-          <h1 className="page-title">Section {selectedSection} Attendance Roster</h1>
+          <div className="page-pretitle">Section {selectedSection}</div>
+          <h1 className="page-title">Daily Attendance</h1>
           <p className="page-description">
-            Faculty attendance marking. Confirm absentees before scheduling automated voice communication.
+            Roster for {selectedDate}. Toggle status to mark absentees.
           </p>
         </div>
 
@@ -128,40 +132,39 @@ export const Attendance: React.FC<AttendanceProps> = ({
             type="button"
             onClick={() => setIsConfirmModalOpen(true)}
             disabled={currentAbsentees.length === 0}
-            className={`btn-tabler ${currentAbsentees.length > 0 ? 'btn-tabler-primary' : 'btn-tabler-outline'}`}
+            className={`btn-tabler btn-tabler-sm ${currentAbsentees.length > 0 ? 'btn-tabler-primary' : 'btn-tabler-outline'}`}
             style={{ opacity: currentAbsentees.length === 0 ? 0.6 : 1 }}
           >
             <UserX size={14} />
-            Review & Confirm Absentees ({currentAbsentees.length})
+            Review Absentees ({currentAbsentees.length})
           </button>
         </div>
       </div>
 
       {/* Metric Cards Bar */}
       <div className="metrics-grid">
-        <div className="metric-card">
-          <div className="metric-card-label">Enrolled Students</div>
-          <div className="metric-card-value">{sectionStudents.length}</div>
-          <div className="metric-card-subtext">Section {selectedSection} Total</div>
-        </div>
+        <StatCard
+          title="Total Enrolled"
+          value={sectionStudents.length}
+          subtitle={`Section ${selectedSection}`}
+          icon={Users}
+        />
 
-        <div className="metric-card">
-          <div className="metric-card-label">Present Today</div>
-          <div className="metric-card-value" style={{ color: '#0f766e' }}>
-            {sectionStudents.length - currentAbsentees.length}
-          </div>
-          <div className="metric-card-subtext">
-            {(((sectionStudents.length - currentAbsentees.length) / sectionStudents.length) * 100).toFixed(1)}% Attendance
-          </div>
-        </div>
+        <StatCard
+          title="Present Today"
+          value={presentCount}
+          subtitle={`${attendanceRate}% attendance rate`}
+          icon={CheckCircle2}
+          trend={{ value: `${presentCount}/${sectionStudents.length}`, positive: currentAbsentees.length === 0 }}
+        />
 
-        <div className="metric-card">
-          <div className="metric-card-label">Absent Today</div>
-          <div className="metric-card-value" style={{ color: '#e11d48' }}>
-            {currentAbsentees.length}
-          </div>
-          <div className="metric-card-subtext">Requires parental call confirmation</div>
-        </div>
+        <StatCard
+          title="Absent Today"
+          value={currentAbsentees.length}
+          subtitle={currentAbsentees.length > 0 ? 'Pending call notification' : 'Full attendance'}
+          icon={UserX}
+          trend={{ value: `${currentAbsentees.length} absent`, positive: false }}
+        />
       </div>
 
       {/* Roster Table Card */}
@@ -169,13 +172,21 @@ export const Attendance: React.FC<AttendanceProps> = ({
         title={
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
             <span>Attendance Checklist</span>
-            <div style={{ position: 'relative', width: 220 }}>
+            <div style={{ position: 'relative', width: 200 }}>
               <input
                 type="search"
-                placeholder="Search roster..."
+                placeholder="Search student..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                style={{ padding: '0.35rem 0.65rem 0.35rem 1.8rem', fontSize: '0.78rem', height: 32, margin: 0 }}
+                style={{
+                  padding: '0.35rem 0.65rem 0.35rem 1.8rem',
+                  fontSize: '0.78rem',
+                  height: 32,
+                  margin: 0,
+                  borderRadius: 6,
+                  border: '1px solid #e2e8f0',
+                  backgroundColor: '#ffffff'
+                }}
               />
               <Search size={13} style={{ position: 'absolute', left: 8, top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
             </div>
@@ -188,7 +199,7 @@ export const Attendance: React.FC<AttendanceProps> = ({
               <tr>
                 <th>Roll Number</th>
                 <th>Student Name</th>
-                <th>Cumulative Record</th>
+                <th>Attendance %</th>
                 <th>Parent Contact</th>
                 <th style={{ textAlign: 'center' }}>Today's Status</th>
               </tr>
@@ -199,7 +210,7 @@ export const Attendance: React.FC<AttendanceProps> = ({
                 const isAbsent = status === 'ABSENT';
 
                 return (
-                  <tr key={student.id} style={{ backgroundColor: isAbsent ? '#fff1f2' : undefined }}>
+                  <tr key={student.id} style={{ backgroundColor: isAbsent ? '#fef2f2' : undefined }}>
                     <td className="roll-number">{student.rollNumber}</td>
                     <td style={{ fontWeight: 600 }}>{student.name}</td>
                     <td>
@@ -244,8 +255,8 @@ export const Attendance: React.FC<AttendanceProps> = ({
       <Modal
         isOpen={isConfirmModalOpen}
         onClose={() => setIsConfirmModalOpen(false)}
-        title="Confirm Absentee List for Parental Outreach"
-        subtitle={`Section ${selectedSection} • Date: ${selectedDate}`}
+        title="Review Absentees"
+        subtitle={`Section ${selectedSection} • ${selectedDate}`}
         footer={
           <div style={{ display: 'flex', gap: '0.5rem' }}>
             <button
@@ -253,7 +264,7 @@ export const Attendance: React.FC<AttendanceProps> = ({
               onClick={() => setIsConfirmModalOpen(false)}
               className="btn-tabler btn-tabler-outline"
             >
-              Cancel & Modify
+              Cancel
             </button>
             <button
               type="button"
@@ -263,37 +274,24 @@ export const Attendance: React.FC<AttendanceProps> = ({
               }}
               className="btn-tabler btn-tabler-primary"
             >
-              <PhoneCall size={14} /> Confirm & Queue Calls ({currentAbsentees.length})
+              <PhoneCall size={14} /> Queue Parent Calls ({currentAbsentees.length})
             </button>
           </div>
         }
       >
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          <div style={{
-            padding: '0.75rem 1rem',
-            backgroundColor: '#fffbeb',
-            border: '1px solid #fde68a',
-            borderRadius: 6,
-            fontSize: '0.78rem',
-            color: '#92400e',
-            display: 'flex',
-            alignItems: 'flex-start',
-            gap: '0.5rem'
-          }}>
-            <AlertCircle size={15} style={{ flexShrink: 0, marginTop: 2 }} />
-            <div>
-              <strong>Coordinator Confirmation (`FR-06`):</strong> Once confirmed, the system creates idempotent simulated call tasks for the absentees below.
-            </div>
-          </div>
+          <p style={{ margin: 0, fontSize: '0.82rem', color: '#64748b' }}>
+            Review the {currentAbsentees.length} absent students before initiating automated voice calls.
+          </p>
 
           <div className="table-responsive">
             <table className="tabler-table">
               <thead>
                 <tr>
-                  <th>Roll No</th>
+                  <th>Roll Number</th>
                   <th>Student Name</th>
-                  <th>Parent / Phone</th>
-                  <th>Attendance %</th>
+                  <th>Parent Contact</th>
+                  <th>Attendance</th>
                 </tr>
               </thead>
               <tbody>
