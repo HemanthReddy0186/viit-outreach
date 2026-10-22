@@ -8,8 +8,8 @@ import {
   PhoneCall, 
   Inbox, 
   FileText,
-  ShieldAlert,
-  Sparkles
+  ShieldCheck,
+  Building2
 } from 'lucide-react';
 import { INSTITUTION_INFO } from '../../mockData';
 
@@ -39,106 +39,111 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const navItems = [
     { id: 'dashboard' as NavItem, label: 'Dashboard', icon: LayoutDashboard },
     { id: 'students' as NavItem, label: 'Student Directory', icon: Users },
-    { id: 'attendance' as NavItem, label: 'Daily Attendance', icon: CalendarCheck, highlight: true },
+    { id: 'attendance' as NavItem, label: 'Daily Attendance', icon: CalendarCheck },
     { id: 'import' as NavItem, label: 'Excel Import Studio', icon: FileSpreadsheet },
     { id: 'marks' as NavItem, label: 'Midterm Marks', icon: GraduationCap },
-    { id: 'calls' as NavItem, label: 'AI Voice Outreach', icon: PhoneCall, badge: activeCallsCount > 0 ? `${activeCallsCount} live` : undefined, badgeColor: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' },
-    { id: 'queries' as NavItem, label: 'Coordinator Inbox', icon: Inbox, badge: pendingQueriesCount > 0 ? `${pendingQueriesCount}` : undefined, badgeColor: 'bg-amber-500/20 text-amber-300 border-amber-500/30' },
+    { id: 'calls' as NavItem, label: 'AI Voice Outreach', icon: PhoneCall, badge: activeCallsCount > 0 ? `${activeCallsCount} live` : undefined },
+    { id: 'queries' as NavItem, label: 'Coordinator Inbox', icon: Inbox, badge: pendingQueriesCount > 0 ? `${pendingQueriesCount}` : undefined },
     { id: 'reports' as NavItem, label: 'Word Reports (.docx)', icon: FileText },
   ];
 
   return (
-    <aside className="w-72 flex-shrink-0 flex flex-col justify-between h-screen sticky top-0 bg-slate-900/90 border-r border-slate-800/80 backdrop-blur-xl z-30 select-none">
+    <aside className="app-sidebar">
       {/* Brand Header */}
-      <div>
-        <div className="p-5 border-b border-slate-800/80">
-          <div className="flex items-center gap-3">
-            <div className="h-11 w-11 rounded-xl bg-gradient-to-tr from-indigo-600 to-cyan-500 p-0.5 shadow-lg shadow-indigo-500/20 flex items-center justify-center">
-              <div className="h-full w-full bg-slate-950 rounded-[10px] flex items-center justify-center">
-                <span className="font-heading font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400 text-lg">
-                  VIIT
-                </span>
-              </div>
-            </div>
-            <div>
-              <div className="flex items-center gap-1.5">
-                <h1 className="font-heading font-bold text-slate-100 text-sm tracking-tight">
-                  VIIT Outreach
-                </h1>
-                <span className="text-[10px] uppercase font-mono font-bold tracking-wider px-1.5 py-0.5 rounded bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
-                  AI MVP
-                </span>
-              </div>
-              <p className="text-xs text-slate-400 truncate max-w-[170px]" title={INSTITUTION_INFO.name}>
-                Vignan's IIT, Visakhapatnam
-              </p>
-            </div>
+      <div style={{ padding: '1.25rem 1.25rem 1rem 1.25rem', borderBottom: '1px solid var(--pico-border-color)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+          <div style={{
+            width: 36,
+            height: 36,
+            borderRadius: 6,
+            backgroundColor: '#0f766e',
+            color: '#ffffff',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontWeight: 700,
+            fontSize: '0.9rem',
+            letterSpacing: '-0.02em'
+          }}>
+            VIIT
           </div>
-
-          <div className="mt-4 px-3 py-2 rounded-lg bg-slate-950/60 border border-slate-800 flex items-center justify-between text-xs">
-            <span className="text-slate-400">Department</span>
-            <span className="font-semibold text-slate-200">CSE (II B.Tech)</span>
+          <div>
+            <div style={{ fontWeight: 700, fontSize: '0.95rem', color: '#0f172a', lineHeight: 1.2 }}>
+              VIIT Outreach
+            </div>
+            <div style={{ fontSize: '0.72rem', color: '#64748b' }}>
+              Vignan's IIT, Visakhapatnam
+            </div>
           </div>
         </div>
 
-        {/* Navigation Items */}
-        <nav className="p-3 space-y-1 overflow-y-auto max-h-[calc(100vh-270px)]">
-          <div className="px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
-            Core Workflows
-          </div>
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = currentTab === item.id;
-            return (
-              <button
-                key={item.id}
-                onClick={() => onSelectTab(item.id)}
-                className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-medium transition-all group ${
-                  isActive
-                    ? 'bg-gradient-to-r from-indigo-600/90 to-indigo-700 text-white shadow-md shadow-indigo-600/25 font-semibold'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
-                }`}
-              >
-                <div className="flex items-center gap-3">
-                  <Icon
-                    className={`h-4 w-4 transition-colors ${
-                      isActive ? 'text-white' : 'text-slate-400 group-hover:text-indigo-400'
-                    }`}
-                  />
-                  <span>{item.label}</span>
-                </div>
-                {item.badge && (
-                  <span
-                    className={`text-[10px] px-2 py-0.5 rounded-full font-mono border ${item.badgeColor || 'bg-slate-800 text-slate-300'}`}
-                  >
-                    {item.badge}
-                  </span>
-                )}
-              </button>
-            );
-          })}
-        </nav>
+        <div style={{
+          marginTop: '0.85rem',
+          padding: '0.4rem 0.65rem',
+          borderRadius: 6,
+          backgroundColor: '#f8fafc',
+          border: '1px solid #e2e8f0',
+          fontSize: '0.75rem',
+          display: 'flex',
+          justifyContent: 'space-between',
+          color: '#475569'
+        }}>
+          <span>Dept</span>
+          <strong style={{ color: '#0f766e' }}>CSE (II B.Tech)</strong>
+        </div>
       </div>
 
-      {/* Safety & Simulation Status Banner */}
-      <div className="p-4 border-t border-slate-800/80 bg-slate-950/40">
-        <div className="p-3 rounded-xl bg-indigo-950/30 border border-indigo-900/50 flex flex-col gap-2">
-          <div className="flex items-center gap-2 text-indigo-300 text-xs font-semibold">
-            <Sparkles className="h-3.5 w-3.5 text-cyan-400 animate-pulse" />
-            <span>AI Voice Simulator Active</span>
-          </div>
-          <p className="text-[11px] text-slate-400 leading-relaxed">
-            Phase 1 Testing: Calls are purely simulated. No real phone numbers are dialed.
-          </p>
+      {/* Navigation List */}
+      <nav style={{ padding: '0.75rem 0.65rem', flex: 1, overflowY: 'auto' }}>
+        <div style={{
+          fontSize: '0.68rem',
+          fontWeight: 700,
+          textTransform: 'uppercase',
+          color: '#94a3b8',
+          letterSpacing: '0.05em',
+          padding: '0.4rem 0.75rem'
+        }}>
+          Workflows
         </div>
 
-        <div className="mt-3 flex items-center justify-between pt-2 border-t border-slate-800/60 text-[11px] text-slate-400">
-          <span className="flex items-center gap-1.5">
-            <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            Coord: Dr. K.S. Rao
-          </span>
-          <span className="text-[10px] font-mono text-slate-400">v1.0.0-phase1</span>
+        {navItems.map((item) => {
+          const Icon = item.icon;
+          const isActive = currentTab === item.id;
+          return (
+            <div
+              key={item.id}
+              onClick={() => onSelectTab(item.id)}
+              className={`sidebar-nav-link ${isActive ? 'active' : ''}`}
+            >
+              <Icon size={16} color={isActive ? '#0f766e' : '#64748b'} />
+              <span style={{ flex: 1 }}>{item.label}</span>
+              {item.badge && (
+                <span className="status-pill status-pill-teal" style={{ fontSize: '0.68rem', padding: '0.1rem 0.4rem' }}>
+                  {item.badge}
+                </span>
+              )}
+            </div>
+          );
+        })}
+      </nav>
+
+      {/* Footer Info */}
+      <div style={{ padding: '1rem', borderTop: '1px solid var(--pico-border-color)', backgroundColor: '#ffffff' }}>
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.5rem',
+          fontSize: '0.75rem',
+          color: '#0f766e',
+          fontWeight: 600,
+          marginBottom: '0.35rem'
+        }}>
+          <span style={{ width: 7, height: 7, borderRadius: '50%', backgroundColor: '#0f766e' }} />
+          Simulated Calling Active
         </div>
+        <p style={{ margin: 0, fontSize: '0.7rem', color: '#64748b', lineHeight: 1.3 }}>
+          Phase 1 Prototype. Fictional data only. No external phone calls placed.
+        </p>
       </div>
     </aside>
   );

@@ -1,17 +1,12 @@
 import React, { useState } from 'react';
 import { 
-  Calendar, 
   CheckCircle2, 
   XCircle, 
   UserX, 
-  Save, 
   PhoneCall, 
   AlertCircle, 
-  ShieldAlert, 
-  Sparkles,
-  Search,
-  Check,
-  RefreshCw
+  Search, 
+  Check 
 } from 'lucide-react';
 import { Card } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
@@ -41,7 +36,6 @@ export const Attendance: React.FC<AttendanceProps> = ({
 
   const sectionStudents = students.filter(s => s.section === selectedSection);
 
-  // Map attendance record status or default to PRESENT
   const getStatusForStudent = (studentId: string): 'PRESENT' | 'ABSENT' => {
     const record = attendance.find(
       a => a.studentId === studentId && a.date === selectedDate && a.section === selectedSection
@@ -81,10 +75,9 @@ export const Attendance: React.FC<AttendanceProps> = ({
     }
     onUpdateAttendance(updatedRecords);
     setIsSavedNotice(true);
-    setTimeout(() => setIsSavedNotice(false), 2500);
+    setTimeout(() => setIsSavedNotice(false), 2000);
   };
 
-  // Quick mark all present
   const handleMarkAllPresent = () => {
     const updated = attendance.map(a => {
       if (a.section === selectedSection && a.date === selectedDate) {
@@ -105,170 +98,136 @@ export const Attendance: React.FC<AttendanceProps> = ({
   );
 
   return (
-    <div className="space-y-6">
-      {/* Action Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div>
+      {/* Header */}
+      <div className="page-header">
         <div>
-          <div className="flex items-center gap-2">
-            <h2 className="text-xl font-heading font-bold text-slate-100 tracking-tight">
-              Section {selectedSection} Roster Attendance
-            </h2>
-            <Badge variant="indigo">{selectedDate}</Badge>
-          </div>
-          <p className="text-xs text-slate-400 mt-0.5">
-            Mark daily attendance. Coordinators must confirm absentees prior to automated call queuing.
+          <div className="page-pretitle">Daily Operations • {selectedDate}</div>
+          <h1 className="page-title">Section {selectedSection} Attendance Roster</h1>
+          <p className="page-description">
+            Faculty attendance marking. Confirm absentees before scheduling automated voice communication.
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
           {isSavedNotice && (
-            <span className="text-xs text-emerald-400 flex items-center gap-1 font-medium animate-pulse">
-              <Check className="h-3.5 w-3.5" /> Changes saved locally
+            <span style={{ fontSize: '0.75rem', color: '#0f766e', display: 'flex', alignItems: 'center', gap: '0.25rem', fontWeight: 600 }}>
+              <Check size={14} /> Saved
             </span>
           )}
 
           <button
+            type="button"
             onClick={handleMarkAllPresent}
-            className="px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition-colors"
+            className="btn-tabler btn-tabler-outline btn-tabler-sm"
           >
             Mark All Present
           </button>
 
           <button
+            type="button"
             onClick={() => setIsConfirmModalOpen(true)}
             disabled={currentAbsentees.length === 0}
-            className={`px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 shadow-lg transition-all ${
-              currentAbsentees.length > 0
-                ? 'bg-gradient-to-r from-rose-600 to-indigo-600 hover:from-rose-500 hover:to-indigo-500 text-white shadow-rose-600/25'
-                : 'bg-slate-800 text-slate-500 cursor-not-allowed'
-            }`}
+            className={`btn-tabler ${currentAbsentees.length > 0 ? 'btn-tabler-primary' : 'btn-tabler-outline'}`}
+            style={{ opacity: currentAbsentees.length === 0 ? 0.6 : 1 }}
           >
-            <UserX className="h-4 w-4" />
+            <UserX size={14} />
             Review & Confirm Absentees ({currentAbsentees.length})
           </button>
         </div>
       </div>
 
-      {/* Attendance Metrics Bar */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="p-4 rounded-xl bg-slate-900/80 border border-slate-800 flex items-center justify-between">
-          <div>
-            <span className="text-xs text-slate-400 font-medium">Total Enrolled</span>
-            <p className="text-2xl font-heading font-bold text-slate-100 mt-1">{sectionStudents.length}</p>
+      {/* Metric Cards Bar */}
+      <div className="metrics-grid">
+        <div className="metric-card">
+          <div className="metric-card-label">Enrolled Students</div>
+          <div className="metric-card-value">{sectionStudents.length}</div>
+          <div className="metric-card-subtext">Section {selectedSection} Total</div>
+        </div>
+
+        <div className="metric-card">
+          <div className="metric-card-label">Present Today</div>
+          <div className="metric-card-value" style={{ color: '#0f766e' }}>
+            {sectionStudents.length - currentAbsentees.length}
           </div>
-          <div className="p-3 rounded-xl bg-slate-800 text-slate-300">
-            <Calendar className="h-5 w-5" />
+          <div className="metric-card-subtext">
+            {(((sectionStudents.length - currentAbsentees.length) / sectionStudents.length) * 100).toFixed(1)}% Attendance
           </div>
         </div>
 
-        <div className="p-4 rounded-xl bg-slate-900/80 border border-slate-800 flex items-center justify-between">
-          <div>
-            <span className="text-xs text-emerald-400 font-medium">Present Today</span>
-            <p className="text-2xl font-heading font-bold text-emerald-400 mt-1">
-              {sectionStudents.length - currentAbsentees.length}
-            </p>
+        <div className="metric-card">
+          <div className="metric-card-label">Absent Today</div>
+          <div className="metric-card-value" style={{ color: '#e11d48' }}>
+            {currentAbsentees.length}
           </div>
-          <div className="p-3 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-            <CheckCircle2 className="h-5 w-5" />
-          </div>
-        </div>
-
-        <div className="p-4 rounded-xl bg-slate-900/80 border border-slate-800 flex items-center justify-between">
-          <div>
-            <span className="text-xs text-rose-400 font-medium">Absent Today</span>
-            <p className="text-2xl font-heading font-bold text-rose-400 mt-1">{currentAbsentees.length}</p>
-          </div>
-          <div className="p-3 rounded-xl bg-rose-500/10 text-rose-400 border border-rose-500/20">
-            <XCircle className="h-5 w-5" />
-          </div>
+          <div className="metric-card-subtext">Requires parental call confirmation</div>
         </div>
       </div>
 
-      {/* Attendance Roster Table */}
-      <Card className="p-0 overflow-hidden">
-        <div className="p-4 border-b border-slate-800 flex items-center justify-between gap-4 bg-slate-950/40">
-          <div className="relative w-72">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-500" />
-            <input
-              type="text"
-              placeholder="Search student or roll number..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-9 pr-3 py-1.5 w-full rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-200 placeholder:text-slate-500 focus:outline-none focus:border-indigo-500"
-            />
+      {/* Roster Table Card */}
+      <Card
+        title={
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+            <span>Attendance Checklist</span>
+            <div style={{ position: 'relative', width: 220 }}>
+              <input
+                type="search"
+                placeholder="Search roster..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                style={{ padding: '0.35rem 0.65rem 0.35rem 1.8rem', fontSize: '0.78rem', height: 32, margin: 0 }}
+              />
+              <Search size={13} style={{ position: 'absolute', left: 8, top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
+            </div>
           </div>
-          <span className="text-xs text-slate-400 font-mono">
-            Click status toggle to switch Present/Absent
-          </span>
-        </div>
-
-        <div 
-          tabIndex={0} 
-          role="region" 
-          aria-label="Attendance Roster Table"
-          className="table-wrapper max-h-[600px] overflow-auto"
-        >
-          <table className="w-full text-left text-xs border-collapse">
+        }
+      >
+        <div className="table-responsive">
+          <table className="tabler-table">
             <thead>
-              <tr className="border-b border-slate-800 text-slate-400 bg-slate-950/80">
-                <th className="py-3 px-4 font-semibold">Roll Number</th>
-                <th className="py-3 px-4 font-semibold">Student Name</th>
-                <th className="py-3 px-4 font-semibold">Cumulative Attendance</th>
-                <th className="py-3 px-4 font-semibold">Parent Contact</th>
-                <th className="py-3 px-4 font-semibold text-center">Today's Status</th>
+              <tr>
+                <th>Roll Number</th>
+                <th>Student Name</th>
+                <th>Cumulative Record</th>
+                <th>Parent Contact</th>
+                <th style={{ textAlign: 'center' }}>Today's Status</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/60 text-slate-300">
-              {filtered.map((student) => {
+            <tbody>
+              {filtered.map(student => {
                 const status = getStatusForStudent(student.id);
                 const isAbsent = status === 'ABSENT';
 
                 return (
-                  <tr 
-                    key={student.id} 
-                    className={`transition-colors ${
-                      isAbsent ? 'bg-rose-950/15 hover:bg-rose-950/25' : 'hover:bg-slate-800/40'
-                    }`}
-                  >
-                    <td className="py-3 px-4 font-mono font-bold text-slate-200">
-                      {student.rollNumber}
-                    </td>
-                    <td className="py-3 px-4 font-semibold text-slate-100">
-                      {student.name}
-                    </td>
-                    <td className="py-3 px-4 font-mono">
-                      <span className={`inline-flex px-2 py-0.5 rounded text-[11px] font-semibold border ${
-                        student.attendancePercentage < 65
-                          ? 'bg-rose-500/15 text-rose-400 border-rose-500/30'
-                          : student.attendancePercentage < 75
-                          ? 'bg-amber-500/15 text-amber-300 border-amber-500/30'
-                          : 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30'
+                  <tr key={student.id} style={{ backgroundColor: isAbsent ? '#fff1f2' : undefined }}>
+                    <td className="roll-number">{student.rollNumber}</td>
+                    <td style={{ fontWeight: 600 }}>{student.name}</td>
+                    <td>
+                      <span className={`status-pill ${
+                        student.attendancePercentage < 65 ? 'status-pill-danger' :
+                        student.attendancePercentage < 75 ? 'status-pill-warning' : 'status-pill-success'
                       }`}>
                         {student.attendancePercentage}% ({student.attendedClasses}/{student.totalClasses})
                       </span>
                     </td>
-                    <td className="py-3 px-4 text-slate-400">
-                      <span>{student.parentName}</span>
-                      <span className="text-[11px] font-mono text-slate-400 block">{student.parentPhone}</span>
+                    <td style={{ fontSize: '0.75rem' }}>
+                      <div>{student.parentName}</div>
+                      <div style={{ color: '#64748b', fontFamily: 'var(--font-mono)' }}>{student.parentPhone}</div>
                     </td>
-                    <td className="py-3 px-4 text-center">
+                    <td style={{ textAlign: 'center' }}>
                       <button
+                        type="button"
                         onClick={() => handleToggleStatus(student)}
-                        className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-xl font-bold font-mono text-xs transition-all ${
-                          isAbsent
-                            ? 'bg-rose-600 text-white shadow-md shadow-rose-600/30'
-                            : 'bg-emerald-600/20 text-emerald-300 hover:bg-emerald-600/30 border border-emerald-500/30'
-                        }`}
+                        className={`btn-tabler btn-tabler-sm ${isAbsent ? 'btn-tabler-danger' : 'btn-tabler-outline'}`}
+                        style={{ minWidth: 95, justifyContent: 'center' }}
                       >
                         {isAbsent ? (
                           <>
-                            <XCircle className="h-3.5 w-3.5" />
-                            ABSENT
+                            <XCircle size={13} /> ABSENT
                           </>
                         ) : (
                           <>
-                            <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
-                            PRESENT
+                            <CheckCircle2 size={13} color="#0f766e" /> PRESENT
                           </>
                         )}
                       </button>
@@ -281,60 +240,73 @@ export const Attendance: React.FC<AttendanceProps> = ({
         </div>
       </Card>
 
-      {/* Two-Step Absentee Confirmation Modal */}
+      {/* Absentee Confirmation Modal */}
       <Modal
         isOpen={isConfirmModalOpen}
         onClose={() => setIsConfirmModalOpen(false)}
         title="Confirm Absentee List for Parental Outreach"
         subtitle={`Section ${selectedSection} • Date: ${selectedDate}`}
         footer={
-          <div className="flex items-center gap-3">
+          <div style={{ display: 'flex', gap: '0.5rem' }}>
             <button
+              type="button"
               onClick={() => setIsConfirmModalOpen(false)}
-              className="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 transition-colors"
+              className="btn-tabler btn-tabler-outline"
             >
               Cancel & Modify
             </button>
             <button
+              type="button"
               onClick={() => {
                 onConfirmAbsenteesForCall(currentAbsentees.map(a => a.id));
                 setIsConfirmModalOpen(false);
               }}
-              className="px-5 py-2 rounded-xl text-xs font-semibold bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white shadow-lg shadow-indigo-600/30 flex items-center gap-2 transition-all"
+              className="btn-tabler btn-tabler-primary"
             >
-              <PhoneCall className="h-4 w-4" />
-              Confirm & Queue Simulated Calls ({currentAbsentees.length})
+              <PhoneCall size={14} /> Confirm & Queue Calls ({currentAbsentees.length})
             </button>
           </div>
         }
       >
-        <div className="space-y-4">
-          <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-300 leading-relaxed flex items-start gap-2.5">
-            <AlertCircle className="h-4 w-4 text-amber-400 flex-shrink-0 mt-0.5" />
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <div style={{
+            padding: '0.75rem 1rem',
+            backgroundColor: '#fffbeb',
+            border: '1px solid #fde68a',
+            borderRadius: 6,
+            fontSize: '0.78rem',
+            color: '#92400e',
+            display: 'flex',
+            alignItems: 'flex-start',
+            gap: '0.5rem'
+          }}>
+            <AlertCircle size={15} style={{ flexShrink: 0, marginTop: 2 }} />
             <div>
-              <strong>Coordinator Sign-Off Required:</strong> Per institutional policy (`FR-06`), calls are only scheduled after explicit coordinator review. Confirming will create idempotent call tasks for the students listed below.
+              <strong>Coordinator Confirmation (`FR-06`):</strong> Once confirmed, the system creates idempotent simulated call tasks for the absentees below.
             </div>
           </div>
 
-          <div className="rounded-xl border border-slate-800 overflow-hidden">
-            <table className="w-full text-left text-xs">
-              <thead className="bg-slate-950 text-slate-400 border-b border-slate-800">
+          <div className="table-responsive">
+            <table className="tabler-table">
+              <thead>
                 <tr>
-                  <th className="py-2.5 px-3 font-semibold">Roll Number</th>
-                  <th className="py-2.5 px-3 font-semibold">Student Name</th>
-                  <th className="py-2.5 px-3 font-semibold">Parent Name</th>
-                  <th className="py-2.5 px-3 font-semibold">Parent Phone</th>
-                  <th className="py-2.5 px-3 font-semibold">Attendance</th>
+                  <th>Roll No</th>
+                  <th>Student Name</th>
+                  <th>Parent / Phone</th>
+                  <th>Attendance %</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800/60 text-slate-300">
-                {currentAbsentees.map(student => (
-                  <tr key={student.id}>
-                    <td className="py-2.5 px-3 font-mono font-bold text-indigo-400">{student.rollNumber}</td>
-                    <td className="py-2.5 px-3 font-medium text-slate-100">{student.name}</td>
-                    <td className="py-2.5 px-3 text-slate-300">{student.parentName}</td>
-                    <td className="py-2.5 px-3 font-mono text-slate-400">{student.parentPhone}</td>
-                    <td className="py-2.5 px-3 font-mono text-rose-400 font-bold">{student.attendancePercentage}%</td>
+              <tbody>
+                {currentAbsentees.map(s => (
+                  <tr key={s.id}>
+                    <td className="roll-number">{s.rollNumber}</td>
+                    <td style={{ fontWeight: 600 }}>{s.name}</td>
+                    <td style={{ fontSize: '0.75rem' }}>
+                      {s.parentName} ({s.parentPhone})
+                    </td>
+                    <td>
+                      <span className="status-pill status-pill-danger">{s.attendancePercentage}%</span>
+                    </td>
                   </tr>
                 ))}
               </tbody>

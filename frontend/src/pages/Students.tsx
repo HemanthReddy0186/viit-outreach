@@ -1,16 +1,9 @@
 import React, { useState } from 'react';
 import { 
   Search, 
-  Filter, 
-  GraduationCap, 
-  Phone, 
-  Mail, 
-  AlertCircle, 
-  CheckCircle2, 
-  User, 
-  ShieldCheck,
-  ChevronRight,
-  Eye
+  Eye, 
+  ShieldCheck, 
+  GraduationCap 
 } from 'lucide-react';
 import { Card } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
@@ -32,7 +25,6 @@ export const Students: React.FC<StudentsProps> = ({
   const [filterTier, setFilterTier] = useState<'ALL' | 'CRITICAL' | 'WARNING' | 'SAFE'>('ALL');
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
 
-  // Filtering
   const filteredStudents = students.filter(student => {
     const matchesSection = student.section === selectedSection;
     const matchesSearch = 
@@ -53,53 +45,56 @@ export const Students: React.FC<StudentsProps> = ({
     : [];
 
   return (
-    <div className="space-y-6">
-      {/* Header and Controls */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div>
+      {/* Page Header */}
+      <div className="page-header">
         <div>
-          <h2 className="text-xl font-heading font-bold text-slate-100 tracking-tight">
-            CSE Section {selectedSection} Roster
-          </h2>
-          <p className="text-xs text-slate-400 mt-0.5">
-            Displaying {filteredStudents.length} of {students.filter(s => s.section === selectedSection).length} enrolled students
+          <div className="page-pretitle">Student Records</div>
+          <h1 className="page-title">Section {selectedSection} Master Directory</h1>
+          <p className="page-description">
+            Showing {filteredStudents.length} of {students.filter(s => s.section === selectedSection).length} enrolled students
           </p>
         </div>
 
-        {/* Filter and Search Bar */}
-        <div className="flex flex-wrap items-center gap-3">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-500" />
+        {/* Toolbar */}
+        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '0.65rem' }}>
+          <div style={{ position: 'relative', width: 220 }}>
             <input
-              type="text"
-              placeholder="Search name or roll number..."
+              type="search"
+              placeholder="Search roll or student..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-9 pr-3 py-1.5 w-60 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-200 placeholder:text-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+              style={{ padding: '0.35rem 0.65rem 0.35rem 1.8rem', fontSize: '0.78rem', height: 32, margin: 0 }}
             />
+            <Search size={13} style={{ position: 'absolute', left: 8, top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
           </div>
 
-          <div className="flex items-center rounded-xl bg-slate-900 border border-slate-800 p-0.5 text-xs font-medium">
+          <div className="segmented-control">
             <button
+              type="button"
               onClick={() => setFilterTier('ALL')}
-              className={`px-3 py-1 rounded-lg transition-all ${filterTier === 'ALL' ? 'bg-indigo-600 text-white font-semibold' : 'text-slate-400 hover:text-slate-200'}`}
+              className={`segmented-btn ${filterTier === 'ALL' ? 'active' : ''}`}
             >
               All
             </button>
             <button
+              type="button"
               onClick={() => setFilterTier('CRITICAL')}
-              className={`px-3 py-1 rounded-lg transition-all ${filterTier === 'CRITICAL' ? 'bg-rose-600 text-white font-semibold' : 'text-slate-400 hover:text-slate-200'}`}
+              className={`segmented-btn ${filterTier === 'CRITICAL' ? 'active' : ''}`}
             >
               &lt; 65%
             </button>
             <button
+              type="button"
               onClick={() => setFilterTier('WARNING')}
-              className={`px-3 py-1 rounded-lg transition-all ${filterTier === 'WARNING' ? 'bg-amber-600 text-white font-semibold' : 'text-slate-400 hover:text-slate-200'}`}
+              className={`segmented-btn ${filterTier === 'WARNING' ? 'active' : ''}`}
             >
               65-74%
             </button>
             <button
+              type="button"
               onClick={() => setFilterTier('SAFE')}
-              className={`px-3 py-1 rounded-lg transition-all ${filterTier === 'SAFE' ? 'bg-emerald-600 text-white font-semibold' : 'text-slate-400 hover:text-slate-200'}`}
+              className={`segmented-btn ${filterTier === 'SAFE' ? 'active' : ''}`}
             >
               ≥ 75%
             </button>
@@ -107,85 +102,70 @@ export const Students: React.FC<StudentsProps> = ({
         </div>
       </div>
 
-      {/* Responsive Students Table */}
-      <Card className="p-0 overflow-hidden">
-        <div 
-          tabIndex={0} 
-          role="region" 
-          aria-label="Student Roster Directory"
-          className="table-wrapper max-h-[650px] overflow-auto"
-        >
-          <table className="w-full text-left text-xs border-collapse">
-            <thead>
-              <tr className="border-b border-slate-800 text-slate-400 bg-slate-950/80">
-                <th className="py-3.5 px-4 font-semibold">Roll Number</th>
-                <th className="py-3.5 px-4 font-semibold">Student Name</th>
-                <th className="py-3.5 px-4 font-semibold">Parent / Guardian</th>
-                <th className="py-3.5 px-4 font-semibold">Contact Phone</th>
-                <th className="py-3.5 px-4 font-semibold">Attended / Total</th>
-                <th className="py-3.5 px-4 font-semibold">Cumulative %</th>
-                <th className="py-3.5 px-4 font-semibold text-right">Actions</th>
+      {/* Tabler Table */}
+      <div className="table-responsive">
+        <table className="tabler-table">
+          <thead>
+            <tr>
+              <th>Roll Number</th>
+              <th>Student Name</th>
+              <th>Parent / Guardian</th>
+              <th>Contact Phone</th>
+              <th>Attended / Total</th>
+              <th>Cumulative %</th>
+              <th style={{ textAlign: 'right' }}>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredStudents.length === 0 ? (
+              <tr>
+                <td colSpan={7} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
+                  No students match the selected search or attendance criteria.
+                </td>
               </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-800/60 text-slate-300">
-              {filteredStudents.length === 0 ? (
-                <tr>
-                  <td colSpan={7} className="py-12 text-center text-slate-500">
-                    No students match the selected filter criteria.
+            ) : (
+              filteredStudents.map(student => (
+                <tr 
+                  key={student.id}
+                  onClick={() => setSelectedStudent(student)}
+                  style={{ cursor: 'pointer' }}
+                >
+                  <td className="roll-number">{student.rollNumber}</td>
+                  <td style={{ fontWeight: 600 }}>{student.name}</td>
+                  <td>{student.parentName}</td>
+                  <td style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: '#64748b' }}>
+                    {student.parentPhone}
+                  </td>
+                  <td style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem' }}>
+                    {student.attendedClasses} / {student.totalClasses}
+                  </td>
+                  <td>
+                    <span className={`status-pill ${
+                      student.attendancePercentage < 65 ? 'status-pill-danger' :
+                      student.attendancePercentage < 75 ? 'status-pill-warning' : 'status-pill-success'
+                    }`}>
+                      {student.attendancePercentage}%
+                    </span>
+                  </td>
+                  <td style={{ textAlign: 'right' }}>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedStudent(student);
+                      }}
+                      className="btn-tabler btn-tabler-outline btn-tabler-sm"
+                      title="Inspect Student Record"
+                    >
+                      <Eye size={13} /> View
+                    </button>
                   </td>
                 </tr>
-              ) : (
-                filteredStudents.map((student) => (
-                  <tr 
-                    key={student.id} 
-                    className="hover:bg-slate-800/40 transition-colors group cursor-pointer"
-                    onClick={() => setSelectedStudent(student)}
-                  >
-                    <td className="py-3.5 px-4 font-mono font-bold text-indigo-400">
-                      {student.rollNumber}
-                    </td>
-                    <td className="py-3.5 px-4 font-semibold text-slate-100">
-                      {student.name}
-                    </td>
-                    <td className="py-3.5 px-4 text-slate-300">
-                      {student.parentName}
-                    </td>
-                    <td className="py-3.5 px-4 font-mono text-slate-400">
-                      {student.parentPhone}
-                    </td>
-                    <td className="py-3.5 px-4 font-mono text-slate-300">
-                      {student.attendedClasses} / {student.totalClasses}
-                    </td>
-                    <td className="py-3.5 px-4">
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full font-mono text-[11px] font-semibold border ${
-                        student.attendancePercentage < 65
-                          ? 'bg-rose-500/15 text-rose-400 border-rose-500/30'
-                          : student.attendancePercentage < 75
-                          ? 'bg-amber-500/15 text-amber-300 border-amber-500/30'
-                          : 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30'
-                      }`}>
-                        {student.attendancePercentage}%
-                      </span>
-                    </td>
-                    <td className="py-3.5 px-4 text-right">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setSelectedStudent(student);
-                        }}
-                        className="p-1.5 rounded-lg text-slate-400 hover:text-indigo-400 hover:bg-slate-800 transition-colors"
-                        title="View Full Student Record"
-                      >
-                        <Eye className="h-4 w-4" />
-                      </button>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-      </Card>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
 
       {/* Student Details Modal */}
       {selectedStudent && (
@@ -193,9 +173,9 @@ export const Students: React.FC<StudentsProps> = ({
           isOpen={!!selectedStudent}
           onClose={() => setSelectedStudent(null)}
           title={
-            <div className="flex items-center gap-2.5">
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <span>{selectedStudent.name}</span>
-              <span className="font-mono text-xs px-2 py-0.5 rounded bg-indigo-500/15 text-indigo-400 border border-indigo-500/30">
+              <span className="status-pill status-pill-teal" style={{ fontFamily: 'var(--font-mono)' }}>
                 {selectedStudent.rollNumber}
               </span>
             </div>
@@ -203,91 +183,94 @@ export const Students: React.FC<StudentsProps> = ({
           subtitle={`VIIT Computer Science & Engineering • Section ${selectedStudent.section}`}
           footer={
             <button
+              type="button"
               onClick={() => setSelectedStudent(null)}
-              className="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800 text-slate-200 hover:bg-slate-700 transition-colors"
+              className="btn-tabler btn-tabler-outline"
             >
-              Close Record
+              Close
             </button>
           }
         >
-          <div className="space-y-6">
-            {/* Quick Metrics Bar */}
-            <div className="grid grid-cols-3 gap-3">
-              <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 text-center">
-                <span className="text-[10px] text-slate-400 uppercase font-semibold">Attendance %</span>
-                <p className={`text-xl font-heading font-bold mt-1 ${
-                  selectedStudent.attendancePercentage < 65 ? 'text-rose-400' :
-                  selectedStudent.attendancePercentage < 75 ? 'text-amber-400' : 'text-emerald-400'
-                }`}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+            {/* Stat Row */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.75rem' }}>
+              <div style={{ padding: '0.85rem', backgroundColor: '#f8fafc', borderRadius: 6, textAlign: 'center', border: '1px solid #e2e8f0' }}>
+                <div style={{ fontSize: '0.7rem', color: '#64748b', textTransform: 'uppercase', fontWeight: 600 }}>Attendance %</div>
+                <div style={{
+                  fontSize: '1.35rem',
+                  fontWeight: 700,
+                  marginTop: '0.2rem',
+                  color: selectedStudent.attendancePercentage < 65 ? '#e11d48' : selectedStudent.attendancePercentage < 75 ? '#d97706' : '#0f766e'
+                }}>
                   {selectedStudent.attendancePercentage}%
-                </p>
+                </div>
               </div>
-              <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 text-center">
-                <span className="text-[10px] text-slate-400 uppercase font-semibold">Classes Attended</span>
-                <p className="text-xl font-heading font-bold text-slate-200 mt-1">
-                  {selectedStudent.attendedClasses} <span className="text-xs text-slate-400 font-normal">/ {selectedStudent.totalClasses}</span>
-                </p>
+
+              <div style={{ padding: '0.85rem', backgroundColor: '#f8fafc', borderRadius: 6, textAlign: 'center', border: '1px solid #e2e8f0' }}>
+                <div style={{ fontSize: '0.7rem', color: '#64748b', textTransform: 'uppercase', fontWeight: 600 }}>Attended Classes</div>
+                <div style={{ fontSize: '1.35rem', fontWeight: 700, marginTop: '0.2rem', color: '#0f172a' }}>
+                  {selectedStudent.attendedClasses} <span style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 400 }}>/ {selectedStudent.totalClasses}</span>
+                </div>
               </div>
-              <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 text-center">
-                <span className="text-[10px] text-slate-400 uppercase font-semibold">Academic Status</span>
-                <p className="text-xs font-semibold text-indigo-400 mt-2">
+
+              <div style={{ padding: '0.85rem', backgroundColor: '#f8fafc', borderRadius: 6, textAlign: 'center', border: '1px solid #e2e8f0' }}>
+                <div style={{ fontSize: '0.7rem', color: '#64748b', textTransform: 'uppercase', fontWeight: 600 }}>Standing</div>
+                <div style={{ fontSize: '0.85rem', fontWeight: 600, marginTop: '0.45rem', color: '#0f766e' }}>
                   Regular Enrolled
-                </p>
-              </div>
-            </div>
-
-            {/* Parent & Contact Verification */}
-            <div className="p-4 rounded-xl bg-slate-950/60 border border-slate-800 space-y-3">
-              <div className="flex items-center gap-2 text-xs font-semibold text-slate-200">
-                <ShieldCheck className="h-4 w-4 text-emerald-400" />
-                <span>Verified Guardian Information (Call Recipient)</span>
-              </div>
-              <div className="grid grid-cols-2 gap-4 text-xs">
-                <div>
-                  <span className="text-slate-400">Parent / Guardian:</span>
-                  <p className="font-semibold text-slate-200 mt-0.5">{selectedStudent.parentName}</p>
-                </div>
-                <div>
-                  <span className="text-slate-400">Registered Phone:</span>
-                  <p className="font-mono text-indigo-400 mt-0.5">{selectedStudent.parentPhone}</p>
                 </div>
               </div>
             </div>
 
-            {/* Midterm Assessment Scores */}
-            <div className="space-y-3">
-              <div className="flex items-center justify-between text-xs font-semibold text-slate-200">
-                <div className="flex items-center gap-2">
-                  <GraduationCap className="h-4 w-4 text-indigo-400" />
-                  <span>Midterm Evaluation Scores</span>
+            {/* Parent Contact */}
+            <div style={{ padding: '0.85rem 1rem', backgroundColor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 6 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.75rem', fontWeight: 600, color: '#0f766e', marginBottom: '0.5rem' }}>
+                <ShieldCheck size={14} /> Registered Guardian Details
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', fontSize: '0.8rem' }}>
+                <div>
+                  <div style={{ fontSize: '0.7rem', color: '#64748b' }}>Parent / Guardian:</div>
+                  <strong style={{ color: '#0f172a' }}>{selectedStudent.parentName}</strong>
                 </div>
-                <span className="text-[11px] text-slate-400 font-normal">Independent Assessment DB</span>
+                <div>
+                  <div style={{ fontSize: '0.7rem', color: '#64748b' }}>Phone Number:</div>
+                  <strong style={{ color: '#0f766e', fontFamily: 'var(--font-mono)' }}>{selectedStudent.parentPhone}</strong>
+                </div>
+              </div>
+            </div>
+
+            {/* Midterm Scores */}
+            <div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.78rem', fontWeight: 600, color: '#0f172a' }}>
+                  <GraduationCap size={15} color="#0f766e" /> Official Midterm Assessment Records
+                </div>
+                <span style={{ fontSize: '0.7rem', color: '#64748b' }}>Independent Table (`FR-05`)</span>
               </div>
 
               {studentMarks.length === 0 ? (
-                <div className="p-4 rounded-xl bg-slate-950/40 border border-slate-800 text-center text-xs text-slate-400">
-                  No midterm marks recorded yet for this student.
+                <div style={{ padding: '1rem', textAlign: 'center', fontSize: '0.75rem', color: '#64748b', backgroundColor: '#f8fafc', borderRadius: 6 }}>
+                  No midterm marks recorded yet.
                 </div>
               ) : (
-                <div className="rounded-xl border border-slate-800 overflow-hidden">
-                  <table className="w-full text-left text-xs">
-                    <thead className="bg-slate-950 text-slate-400 border-b border-slate-800">
+                <div className="table-responsive">
+                  <table className="tabler-table">
+                    <thead>
                       <tr>
-                        <th className="py-2.5 px-3 font-semibold">Subject</th>
-                        <th className="py-2.5 px-3 font-semibold">Assessment</th>
-                        <th className="py-2.5 px-3 font-semibold">Score</th>
-                        <th className="py-2.5 px-3 font-semibold">Updated</th>
+                        <th>Subject</th>
+                        <th>Assessment</th>
+                        <th>Marks Obtained</th>
+                        <th>Recorded Date</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-800/60 text-slate-300">
+                    <tbody>
                       {studentMarks.map(m => (
                         <tr key={m.id}>
-                          <td className="py-2.5 px-3 font-medium text-slate-100">{m.subject}</td>
-                          <td className="py-2.5 px-3 text-slate-400">{m.assessmentName}</td>
-                          <td className="py-2.5 px-3 font-mono font-bold text-indigo-400">
+                          <td style={{ fontWeight: 600 }}>{m.subject}</td>
+                          <td><Badge variant="teal">{m.assessmentName}</Badge></td>
+                          <td style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: '#0f766e' }}>
                             {m.marksObtained} / {m.maxMarks}
                           </td>
-                          <td className="py-2.5 px-3 font-mono text-[11px] text-slate-400">{m.updatedAt}</td>
+                          <td style={{ fontSize: '0.75rem', color: '#64748b', fontFamily: 'var(--font-mono)' }}>{m.updatedAt}</td>
                         </tr>
                       ))}
                     </tbody>

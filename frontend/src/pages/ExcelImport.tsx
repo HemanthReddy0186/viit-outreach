@@ -3,14 +3,10 @@ import {
   UploadCloud, 
   FileSpreadsheet, 
   CheckCircle2, 
-  AlertTriangle, 
-  XCircle, 
   ShieldCheck, 
   Download, 
-  ArrowRight,
   Database,
-  RefreshCw,
-  Sparkles
+  RefreshCw 
 } from 'lucide-react';
 import { Card } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
@@ -22,8 +18,7 @@ interface ExcelImportProps {
 }
 
 export const ExcelImport: React.FC<ExcelImportProps> = ({ onCommitSuccess }) => {
-  const [fileUploaded, setFileUploaded] = useState(true); // Demo loaded state
-  const [previewRows, setPreviewRows] = useState<ExcelImportPreviewRow[]>(SAMPLE_EXCEL_IMPORT_PREVIEW);
+  const [previewRows] = useState<ExcelImportPreviewRow[]>(SAMPLE_EXCEL_IMPORT_PREVIEW);
   const [isCommitting, setIsCommitting] = useState(false);
   const [commitSuccess, setCommitSuccess] = useState(false);
 
@@ -38,142 +33,151 @@ export const ExcelImport: React.FC<ExcelImportProps> = ({ onCommitSuccess }) => 
       setIsCommitting(false);
       setCommitSuccess(true);
       onCommitSuccess();
-    }, 1500);
+    }, 1200);
   };
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div>
-        <h2 className="text-xl font-heading font-bold text-slate-100 tracking-tight">
-          Excel Data Import & Synchronization Studio
-        </h2>
-        <p className="text-xs text-slate-400 mt-0.5">
-          Authoritative validation pipeline (`FR-02`). Previews and audits records before writing to the database.
-        </p>
-      </div>
-
-      {/* Critical Marks Preservation Assurance Banner */}
-      <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-950/40 to-slate-900 border border-emerald-500/30 flex items-start gap-3.5 shadow-lg">
-        <ShieldCheck className="h-5 w-5 text-emerald-400 flex-shrink-0 mt-0.5" />
-        <div className="text-xs space-y-1">
-          <h4 className="font-semibold text-emerald-300">
-            Midterm Marks Preservation Guarantee (`FR-05`)
-          </h4>
-          <p className="text-slate-300 leading-relaxed">
-            Attendance and examination assessments are segregated in separate relational tables. 
-            If an uploaded Excel sheet contains blank cells in the marks column, the system <strong>will strictly preserve</strong> existing official midterm marks and will never delete or overwrite them.
+    <div>
+      {/* Page Header */}
+      <div className="page-header">
+        <div>
+          <div className="page-pretitle">Batch Data Operations</div>
+          <h1 className="page-title">Excel Import & Synchronization Studio</h1>
+          <p className="page-description">
+            Authoritative pre-commit validation (`FR-02`). Safeguards existing marks and suppresses duplicates.
           </p>
+        </div>
+
+        <div style={{ display: 'flex', gap: '0.5rem' }}>
+          <button
+            type="button"
+            onClick={() => alert("Downloaded validation error diagnostics log (error_audit_2026-10-22.csv).")}
+            className="btn-tabler btn-tabler-outline"
+          >
+            <Download size={14} /> Download Error Log
+          </button>
+          <button
+            type="button"
+            onClick={handleCommit}
+            disabled={isCommitting || commitSuccess}
+            className="btn-tabler btn-tabler-primary"
+          >
+            {isCommitting ? (
+              <>
+                <RefreshCw size={14} className="animate-spin" /> Committing...
+              </>
+            ) : commitSuccess ? (
+              <>
+                <CheckCircle2 size={14} /> Committed to DB!
+              </>
+            ) : (
+              <>
+                <Database size={14} /> Confirm & Commit ({validNewCount + validUpdateCount})
+              </>
+            )}
+          </button>
         </div>
       </div>
 
-      {/* Upload Zone */}
-      <Card>
-        <div className="p-8 border-2 border-dashed border-slate-700/80 hover:border-indigo-500/60 rounded-2xl bg-slate-950/50 flex flex-col items-center justify-center text-center transition-all cursor-pointer group">
-          <div className="p-4 rounded-2xl bg-indigo-500/10 text-indigo-400 group-hover:scale-110 transition-transform mb-3">
-            <UploadCloud className="h-8 w-8" />
+      {/* Marks Preservation Callout */}
+      <div className="institution-banner">
+        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.65rem' }}>
+          <ShieldCheck size={20} color="#0f766e" style={{ flexShrink: 0, marginTop: 2 }} />
+          <div>
+            <strong style={{ color: '#0f766e', fontSize: '0.85rem' }}>
+              Midterm Marks Preservation Guarantee (`FR-05`)
+            </strong>
+            <p style={{ margin: '0.2rem 0 0 0', fontSize: '0.78rem', color: '#334155', lineHeight: 1.4 }}>
+              Student attendance and examination marks are stored independently. Blank cells in the marks column of an attendance upload <strong>never</strong> erase or overwrite existing midterm marks.
+            </p>
           </div>
-          <h3 className="text-sm font-semibold text-slate-200">
-            Upload VIIT Section Excel Attendance Sheet
-          </h3>
-          <p className="text-xs text-slate-400 max-w-sm mt-1">
-            Supports <code className="text-indigo-300 font-mono">.xlsx</code>, <code className="text-indigo-300 font-mono">.xls</code>, and <code className="text-indigo-300 font-mono">.csv</code> up to 10MB.
+        </div>
+      </div>
+
+      {/* Upload Drop Zone Card */}
+      <Card>
+        <div style={{
+          border: '2px dashed #cbd5e1',
+          borderRadius: 8,
+          padding: '2.5rem 1.5rem',
+          textAlign: 'center',
+          backgroundColor: '#f8fafc',
+          cursor: 'pointer'
+        }}>
+          <UploadCloud size={36} color="#0f766e" style={{ margin: '0 auto 0.5rem auto' }} />
+          <div style={{ fontWeight: 600, color: '#0f172a', fontSize: '0.9rem' }}>
+            Upload Section Attendance & Marks Spreadsheet
+          </div>
+          <p style={{ margin: '0.25rem 0 0 0', fontSize: '0.75rem', color: '#64748b' }}>
+            Drag and drop your <code>.xlsx</code> or <code>.csv</code> roster file here, or click to browse.
           </p>
-          <div className="mt-4 flex items-center gap-2 text-xs font-mono text-slate-400">
-            <FileSpreadsheet className="h-4 w-4 text-emerald-400" />
-            <span>Active Sample: <strong className="text-slate-200">VIIT_CSE_II_SecA_Attendance_2026-10-22.xlsx</strong> (4 records parsed)</span>
+          <div style={{
+            marginTop: '1rem',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '0.4rem',
+            padding: '0.35rem 0.75rem',
+            backgroundColor: '#ffffff',
+            border: '1px solid #e2e8f0',
+            borderRadius: 6,
+            fontSize: '0.72rem',
+            color: '#334155'
+          }}>
+            <FileSpreadsheet size={14} color="#0f766e" />
+            Loaded file: <strong>VIIT_CSE_II_SecA_Attendance_2026-10-22.xlsx</strong> (4 records parsed)
           </div>
         </div>
       </Card>
 
-      {/* Validation Summary Stat Counters */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div className="p-4 rounded-xl bg-slate-900/80 border border-slate-800 text-center">
-          <span className="text-[11px] font-semibold text-emerald-400 uppercase tracking-wide">Valid New Students</span>
-          <p className="text-2xl font-heading font-bold text-emerald-400 mt-1">{validNewCount}</p>
-          <span className="text-[10px] text-slate-400">Will insert master record</span>
+      {/* Metric Counters */}
+      <div className="metrics-grid">
+        <div className="metric-card">
+          <div className="metric-card-label">Valid New Students</div>
+          <div className="metric-card-value" style={{ color: '#0f766e' }}>{validNewCount}</div>
+          <div className="metric-card-subtext">Will insert master record</div>
         </div>
 
-        <div className="p-4 rounded-xl bg-slate-900/80 border border-slate-800 text-center">
-          <span className="text-[11px] font-semibold text-cyan-400 uppercase tracking-wide">Valid Updates</span>
-          <p className="text-2xl font-heading font-bold text-cyan-400 mt-1">{validUpdateCount}</p>
-          <span className="text-[10px] text-slate-400">Preserves existing marks</span>
+        <div className="metric-card">
+          <div className="metric-card-label">Valid Updates</div>
+          <div className="metric-card-value" style={{ color: '#0284c7' }}>{validUpdateCount}</div>
+          <div className="metric-card-subtext">Preserves existing marks</div>
         </div>
 
-        <div className="p-4 rounded-xl bg-slate-900/80 border border-slate-800 text-center">
-          <span className="text-[11px] font-semibold text-rose-400 uppercase tracking-wide">Validation Errors</span>
-          <p className="text-2xl font-heading font-bold text-rose-400 mt-1">{invalidCount}</p>
-          <span className="text-[10px] text-slate-400">Will be rejected / skipped</span>
+        <div className="metric-card">
+          <div className="metric-card-label">Validation Errors</div>
+          <div className="metric-card-value" style={{ color: '#e11d48' }}>{invalidCount}</div>
+          <div className="metric-card-subtext">Malformed phone number</div>
         </div>
 
-        <div className="p-4 rounded-xl bg-slate-900/80 border border-slate-800 text-center">
-          <span className="text-[11px] font-semibold text-amber-400 uppercase tracking-wide">Suppressed Duplicates</span>
-          <p className="text-2xl font-heading font-bold text-amber-400 mt-1">{duplicateCount}</p>
-          <span className="text-[10px] text-slate-400">Prevents double-entry</span>
+        <div className="metric-card">
+          <div className="metric-card-label">Suppressed Duplicates</div>
+          <div className="metric-card-value" style={{ color: '#d97706' }}>{duplicateCount}</div>
+          <div className="metric-card-subtext">Prevents double-entry</div>
         </div>
       </div>
 
-      {/* Pre-Commit Row-by-Row Preview Table */}
+      {/* Validation Audit Table */}
       <Card
         title="Validation Pre-Commit Audit Table"
         subtitle="Review row status, column auto-mapping, and error diagnostics before final database commit"
-        action={
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => alert("Downloaded validation error diagnostics log (error_audit_2026-10-22.csv).")}
-              className="px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 border border-slate-700 flex items-center gap-1.5 transition-colors"
-            >
-              <Download className="h-3.5 w-3.5" />
-              Download Error Report
-            </button>
-            <button
-              onClick={handleCommit}
-              disabled={isCommitting || commitSuccess}
-              className={`px-4 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-md transition-all ${
-                commitSuccess
-                  ? 'bg-emerald-600 text-white cursor-default'
-                  : 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-indigo-600/30'
-              }`}
-            >
-              {isCommitting ? (
-                <>
-                  <RefreshCw className="h-3.5 w-3.5 animate-spin" /> Committing...
-                </>
-              ) : commitSuccess ? (
-                <>
-                  <CheckCircle2 className="h-3.5 w-3.5" /> Committed to DB!
-                </>
-              ) : (
-                <>
-                  <Database className="h-3.5 w-3.5" /> Confirm & Commit Valid Rows ({validNewCount + validUpdateCount})
-                </>
-              )}
-            </button>
-          </div>
-        }
       >
-        <div 
-          tabIndex={0} 
-          role="region" 
-          aria-label="Excel Validation Preview Table"
-          className="table-wrapper max-h-[500px] overflow-auto"
-        >
-          <table className="w-full text-left text-xs border-collapse">
+        <div className="table-responsive">
+          <table className="tabler-table">
             <thead>
-              <tr className="border-b border-slate-800 text-slate-400 bg-slate-950/80">
-                <th className="py-3 px-3 font-semibold">Row #</th>
-                <th className="py-3 px-3 font-semibold">Roll Number</th>
-                <th className="py-3 px-3 font-semibold">Student Name</th>
-                <th className="py-3 px-3 font-semibold">Sec</th>
-                <th className="py-3 px-3 font-semibold">Parent Phone</th>
-                <th className="py-3 px-3 font-semibold">Attendance</th>
-                <th className="py-3 px-3 font-semibold">Marks</th>
-                <th className="py-3 px-3 font-semibold">Audit Result</th>
-                <th className="py-3 px-3 font-semibold">Validation Notes</th>
+              <tr>
+                <th>Row #</th>
+                <th>Roll Number</th>
+                <th>Student Name</th>
+                <th>Sec</th>
+                <th>Parent Phone</th>
+                <th>Attendance</th>
+                <th>Marks</th>
+                <th>Audit Status</th>
+                <th>Validation Diagnostics</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/60 text-slate-300">
-              {previewRows.map((row) => {
+            <tbody>
+              {previewRows.map(row => {
                 let badgeVariant: any = 'neutral';
                 let label: string = row.status;
                 if (row.status === 'VALID_NEW') { badgeVariant = 'success'; label = 'NEW RECORD'; }
@@ -182,34 +186,30 @@ export const ExcelImport: React.FC<ExcelImportProps> = ({ onCommitSuccess }) => 
                 if (row.status === 'DUPLICATE') { badgeVariant = 'warning'; label = 'DUPLICATE SUPPRESSED'; }
 
                 return (
-                  <tr key={row.rowNumber} className="hover:bg-slate-800/30 transition-colors">
-                    <td className="py-3 px-3 font-mono text-slate-400 font-bold">{row.rowNumber}</td>
-                    <td className="py-3 px-3 font-mono font-bold text-slate-200">{row.rollNumber}</td>
-                    <td className="py-3 px-3 font-medium text-slate-100">{row.studentName}</td>
-                    <td className="py-3 px-3 font-mono">{row.section}</td>
-                    <td className="py-3 px-3 font-mono text-slate-300">{row.parentPhone}</td>
-                    <td className="py-3 px-3 font-mono">
-                      {row.attendanceStatus || <span className="text-slate-400 font-italic">—</span>}
-                    </td>
-                    <td className="py-3 px-3 font-mono">
+                  <tr key={row.rowNumber}>
+                    <td style={{ fontFamily: 'var(--font-mono)', fontWeight: 600 }}>{row.rowNumber}</td>
+                    <td className="roll-number">{row.rollNumber}</td>
+                    <td style={{ fontWeight: 600 }}>{row.studentName}</td>
+                    <td>{row.section}</td>
+                    <td style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem' }}>{row.parentPhone}</td>
+                    <td>{row.attendanceStatus || '—'}</td>
+                    <td style={{ fontFamily: 'var(--font-mono)' }}>
                       {row.marksObtained ? (
-                        <span className="font-bold text-indigo-400">{row.marksObtained}</span>
+                        <strong style={{ color: '#0f766e' }}>{row.marksObtained}</strong>
                       ) : (
-                        <span className="text-amber-400/80 font-mono text-[11px]">[Blank - Preserved]</span>
+                        <span style={{ fontSize: '0.72rem', color: '#d97706', fontStyle: 'italic' }}>[Blank - Preserved]</span>
                       )}
                     </td>
-                    <td className="py-3 px-3">
-                      <Badge variant={badgeVariant} dot>
-                        {label}
-                      </Badge>
+                    <td>
+                      <Badge variant={badgeVariant}>{label}</Badge>
                     </td>
-                    <td className="py-3 px-3 text-[11px] text-slate-400">
+                    <td style={{ fontSize: '0.75rem' }}>
                       {row.validationErrors.length > 0 ? (
-                        <span className={row.status === 'INVALID' ? 'text-rose-400 font-medium' : 'text-slate-400'}>
+                        <span style={{ color: row.status === 'INVALID' ? '#e11d48' : '#64748b' }}>
                           {row.validationErrors.join(', ')}
                         </span>
                       ) : (
-                        <span className="text-emerald-400">All checks passed</span>
+                        <span style={{ color: '#0f766e' }}>Passed all checks</span>
                       )}
                     </td>
                   </tr>

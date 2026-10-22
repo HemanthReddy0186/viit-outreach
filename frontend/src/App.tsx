@@ -9,6 +9,7 @@ import { MidtermMarks } from './pages/MidtermMarks';
 import { CallHistory } from './pages/CallHistory';
 import { ParentQueries } from './pages/ParentQueries';
 import { Reports } from './pages/Reports';
+import { Check } from 'lucide-react';
 
 import { 
   MOCK_STUDENTS, 
@@ -36,14 +37,13 @@ export function App() {
 
   const showToast = (msg: string) => {
     setNotification(msg);
-    setTimeout(() => setNotification(null), 3500);
+    setTimeout(() => setNotification(null), 3000);
   };
 
   // Trigger simulated voice calling workflow
   const triggerCallSimulation = () => {
-    showToast('Initiating AI Voice Outreach simulation loop for Section absentees...');
+    showToast('Initiating AI Voice Outreach simulation loop...');
     
-    // Simulate updating ringing state to completed
     setTimeout(() => {
       setCallTasks(prev => 
         prev.map(c => {
@@ -68,52 +68,45 @@ export function App() {
           return c;
         })
       );
-      showToast('AI Voice Outreach cycle completed: Transcripts & inquiry logs generated!');
-    }, 2000);
+      showToast('AI Voice Outreach completed: Transcripts & inquiry logs generated!');
+    }, 1500);
   };
 
-  // Handler for absentee confirmation
   const handleConfirmAbsenteesForCall = (absenteeIds: string[]) => {
     triggerCallSimulation();
     setCurrentTab('calls');
   };
 
-  // Update attendance records
   const handleUpdateAttendance = (newAttendance: AttendanceRecord[]) => {
     setAttendance(newAttendance);
   };
 
-  // Update query status
   const handleUpdateQuery = (updatedQuery: ParentQuery) => {
     setQueries(prev => prev.map(q => q.id === updatedQuery.id ? updatedQuery : q));
     showToast(`Query status updated to ${updatedQuery.status}`);
   };
 
-  // Handle commit from Excel import
   const handleCommitSuccess = () => {
     showToast('Excel records committed successfully! Marks preserved.');
     setTimeout(() => {
       setCurrentTab('students');
-    }, 1000);
+    }, 800);
   };
 
   const pendingQueriesCount = queries.filter(q => q.status === 'PENDING').length;
   const activeCallsCount = callTasks.filter(c => c.status === 'RINGING' || c.status === 'IN_PROGRESS').length;
 
   return (
-    <div className="flex min-h-screen bg-slate-950 text-slate-100 font-sans selection:bg-indigo-500 selection:text-white relative">
-      {/* Ambient background glow */}
-      <div className="ambient-glow" />
-
-      {/* Toast Notification */}
+    <div className="app-layout">
+      {/* Toast Notice */}
       {notification && (
-        <div className="fixed top-5 right-5 z-50 px-4 py-2.5 rounded-xl bg-indigo-600 text-white text-xs font-semibold shadow-2xl shadow-indigo-600/50 flex items-center gap-2 animate-bounce">
-          <span className="h-2 w-2 rounded-full bg-cyan-300 animate-pulse" />
-          {notification}
+        <div className="toast-notice">
+          <Check size={16} />
+          <span>{notification}</span>
         </div>
       )}
 
-      {/* Left Navigation Sidebar */}
+      {/* Tabler Sidebar */}
       <Sidebar
         currentTab={currentTab}
         onSelectTab={setCurrentTab}
@@ -122,18 +115,18 @@ export function App() {
       />
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0 z-10">
+      <div className="app-main">
         <Topbar
           currentTab={currentTab}
           selectedDate={selectedDate}
           onDateChange={setSelectedDate}
           selectedSection={selectedSection}
-          onSectionChange={(sec) => setSelectedSection(sec as 'A' | 'B')}
+          onSectionChange={setSelectedSection}
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
         />
 
-        <main className="flex-1 p-6 lg:p-8 max-w-7xl w-full mx-auto">
+        <main className="content-container">
           {currentTab === 'dashboard' && (
             <Dashboard
               students={students}

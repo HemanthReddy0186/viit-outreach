@@ -1,16 +1,10 @@
 import React, { useState } from 'react';
 import { 
   Inbox, 
-  AlertTriangle, 
   CheckCircle2, 
   Clock, 
-  User, 
-  Phone, 
-  MessageSquare, 
-  Filter, 
   Edit3, 
-  Save, 
-  Check
+  Save 
 } from 'lucide-react';
 import { Card } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
@@ -55,44 +49,43 @@ export const ParentQueries: React.FC<ParentQueriesProps> = ({
   };
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div>
+      {/* Page Header */}
+      <div className="page-header">
         <div>
-          <div className="flex items-center gap-2">
-            <h2 className="text-xl font-heading font-bold text-slate-100 tracking-tight">
-              Coordinator Query Inbox
-            </h2>
-            <Badge variant="amber">{queries.filter(q => q.status === 'PENDING').length} Action Required</Badge>
-          </div>
-          <p className="text-xs text-slate-400 mt-0.5">
-            Parent inquiries captured by the AI voice assistant during attendance calls (`FR-10`).
+          <div className="page-pretitle">Coordinator Action Inbox</div>
+          <h1 className="page-title">Parent Inquiries & Follow-up Requests</h1>
+          <p className="page-description">
+            Captured by the AI voice assistant during attendance calls (`FR-10`). Assigned to section coordinators.
           </p>
         </div>
 
-        {/* Filter Pills */}
-        <div className="flex items-center rounded-xl bg-slate-900 border border-slate-800 p-0.5 text-xs font-medium">
+        <div className="segmented-control">
           <button
+            type="button"
             onClick={() => setFilterStatus('ALL')}
-            className={`px-3 py-1 rounded-lg transition-all ${filterStatus === 'ALL' ? 'bg-indigo-600 text-white font-semibold' : 'text-slate-400 hover:text-slate-200'}`}
+            className={`segmented-btn ${filterStatus === 'ALL' ? 'active' : ''}`}
           >
             All ({queries.length})
           </button>
           <button
+            type="button"
             onClick={() => setFilterStatus('PENDING')}
-            className={`px-3 py-1 rounded-lg transition-all ${filterStatus === 'PENDING' ? 'bg-amber-600 text-white font-semibold' : 'text-slate-400 hover:text-slate-200'}`}
+            className={`segmented-btn ${filterStatus === 'PENDING' ? 'active' : ''}`}
           >
             Pending ({queries.filter(q => q.status === 'PENDING').length})
           </button>
           <button
+            type="button"
             onClick={() => setFilterStatus('IN_PROGRESS')}
-            className={`px-3 py-1 rounded-lg transition-all ${filterStatus === 'IN_PROGRESS' ? 'bg-indigo-600 text-white font-semibold' : 'text-slate-400 hover:text-slate-200'}`}
+            className={`segmented-btn ${filterStatus === 'IN_PROGRESS' ? 'active' : ''}`}
           >
             In Progress ({queries.filter(q => q.status === 'IN_PROGRESS').length})
           </button>
           <button
+            type="button"
             onClick={() => setFilterStatus('RESOLVED')}
-            className={`px-3 py-1 rounded-lg transition-all ${filterStatus === 'RESOLVED' ? 'bg-emerald-600 text-white font-semibold' : 'text-slate-400 hover:text-slate-200'}`}
+            className={`segmented-btn ${filterStatus === 'RESOLVED' ? 'active' : ''}`}
           >
             Resolved ({queries.filter(q => q.status === 'RESOLVED').length})
           </button>
@@ -100,88 +93,96 @@ export const ParentQueries: React.FC<ParentQueriesProps> = ({
       </div>
 
       {/* Query Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '1rem' }}>
         {filteredQueries.length === 0 ? (
-          <div className="col-span-2 py-16 text-center text-slate-500 text-xs">
-            <Inbox className="h-10 w-10 mx-auto mb-2 opacity-50" />
-            No inquiries match this status filter.
+          <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '3rem 1rem', color: '#64748b' }}>
+            <Inbox size={32} color="#94a3b8" style={{ margin: '0 auto 0.5rem auto' }} />
+            <p style={{ margin: 0, fontWeight: 600 }}>No inquiries matching this status.</p>
           </div>
         ) : (
-          filteredQueries.map((query) => {
+          filteredQueries.map(query => {
             const isPending = query.status === 'PENDING';
             const isResolved = query.status === 'RESOLVED';
 
             return (
               <div
                 key={query.id}
-                className={`p-5 rounded-2xl border transition-all flex flex-col justify-between ${
-                  isPending
-                    ? 'bg-slate-900/90 border-amber-500/30 shadow-lg shadow-amber-950/20'
-                    : 'bg-slate-900/60 border-slate-800'
-                }`}
+                style={{
+                  backgroundColor: '#ffffff',
+                  border: isPending ? '1px solid #fed7aa' : '1px solid #e2e8f0',
+                  borderRadius: 8,
+                  padding: '1.25rem',
+                  boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between'
+                }}
               >
                 <div>
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-2">
-                      <Badge
-                        variant={
-                          query.category === 'ATTENDANCE_DISPUTE' ? 'danger' :
-                          query.category === 'HEALTH_LEAVE' ? 'warning' : 'indigo'
-                        }
-                      >
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                      <span className="roll-number">{query.studentRoll}</span>
+                      <Badge variant={query.category === 'ATTENDANCE_DISPUTE' ? 'danger' : 'warning'}>
                         {query.category}
                       </Badge>
-                      <span className="font-mono font-bold text-xs text-indigo-400">
-                        {query.studentRoll}
-                      </span>
                     </div>
-
-                    <Badge
-                      variant={
-                        isResolved ? 'success' :
-                        isPending ? 'warning' : 'indigo'
-                      }
-                      dot
-                    >
+                    <Badge variant={isResolved ? 'success' : isPending ? 'warning' : 'info'}>
                       {query.status}
                     </Badge>
                   </div>
 
-                  <h3 className="text-sm font-semibold text-slate-100 mb-1">
-                    {query.studentName}
-                  </h3>
-                  <p className="text-xs text-slate-400 flex items-center gap-2 mb-3">
-                    <span>Parent: <strong>{query.parentName}</strong></span>
-                    <span>•</span>
-                    <span className="font-mono text-[11px]">{query.parentPhone}</span>
-                  </p>
+                  <strong style={{ fontSize: '0.9rem', color: '#0f172a' }}>{query.studentName}</strong>
+                  <div style={{ fontSize: '0.75rem', color: '#64748b', margin: '0.2rem 0 0.65rem 0' }}>
+                    Parent: <strong>{query.parentName}</strong> • {query.parentPhone}
+                  </div>
 
-                  <div className="p-3 rounded-xl bg-slate-950/70 border border-slate-800/80 text-xs text-slate-300 leading-relaxed">
+                  <div style={{
+                    padding: '0.65rem 0.85rem',
+                    backgroundColor: '#f8fafc',
+                    borderRadius: 6,
+                    fontSize: '0.78rem',
+                    color: '#334155',
+                    lineHeight: 1.4,
+                    border: '1px solid #f1f5f9'
+                  }}>
                     "{query.summary}"
                   </div>
 
                   {query.resolutionNotes && (
-                    <div className="mt-3 p-3 rounded-xl bg-emerald-950/20 border border-emerald-500/30 text-xs text-emerald-300 space-y-1">
-                      <span className="font-semibold text-emerald-400 flex items-center gap-1">
-                        <CheckCircle2 className="h-3.5 w-3.5" /> Resolution Record:
-                      </span>
-                      <p className="text-slate-300">{query.resolutionNotes}</p>
+                    <div style={{
+                      marginTop: '0.65rem',
+                      padding: '0.65rem 0.85rem',
+                      backgroundColor: '#ecfdf5',
+                      border: '1px solid #a7f3d0',
+                      borderRadius: 6,
+                      fontSize: '0.75rem',
+                      color: '#065f46'
+                    }}>
+                      <strong>Resolution Note:</strong> {query.resolutionNotes}
                     </div>
                   )}
                 </div>
 
-                <div className="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
-                  <div className="flex items-center gap-1.5 text-[11px]">
-                    <Clock className="h-3.5 w-3.5 text-slate-400" />
-                    <span>Logged: {query.createdAt}</span>
-                  </div>
+                <div style={{
+                  marginTop: '1rem',
+                  paddingTop: '0.75rem',
+                  borderTop: '1px solid #f1f5f9',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  fontSize: '0.72rem',
+                  color: '#64748b'
+                }}>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                    <Clock size={12} /> Logged: {query.createdAt}
+                  </span>
 
                   <button
+                    type="button"
                     onClick={() => handleOpenResolveModal(query)}
-                    className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-200 hover:text-white hover:bg-slate-700 border border-slate-700 flex items-center gap-1.5 transition-colors"
+                    className="btn-tabler btn-tabler-outline btn-tabler-sm"
                   >
-                    <Edit3 className="h-3.5 w-3.5 text-indigo-400" />
-                    Update Status
+                    <Edit3 size={12} /> Update Status
                   </button>
                 </div>
               </div>
@@ -190,7 +191,7 @@ export const ParentQueries: React.FC<ParentQueriesProps> = ({
         )}
       </div>
 
-      {/* Resolve / Action Modal */}
+      {/* Resolution Modal */}
       {selectedQuery && (
         <Modal
           isOpen={!!selectedQuery}
@@ -198,37 +199,38 @@ export const ParentQueries: React.FC<ParentQueriesProps> = ({
           title={`Update Parent Inquiry • ${selectedQuery.studentRoll}`}
           subtitle={`Student: ${selectedQuery.studentName} • Coordinator: ${selectedQuery.assignedCoordinator}`}
           footer={
-            <div className="flex items-center gap-3">
+            <div style={{ display: 'flex', gap: '0.5rem' }}>
               <button
+                type="button"
                 onClick={() => setSelectedQuery(null)}
-                className="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 transition-colors"
+                className="btn-tabler btn-tabler-outline"
               >
                 Cancel
               </button>
               <button
+                type="button"
                 onClick={handleSaveResolution}
-                className="px-5 py-2 rounded-xl text-xs font-semibold bg-indigo-600 hover:bg-indigo-500 text-white flex items-center gap-1.5 shadow-md shadow-indigo-600/30 transition-all"
+                className="btn-tabler btn-tabler-primary"
               >
-                <Save className="h-3.5 w-3.5" />
-                Save & Update Inbox
+                <Save size={13} /> Save Resolution
               </button>
             </div>
           }
         >
-          <div className="space-y-4">
-            <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 text-xs">
-              <span className="text-slate-400 font-medium">Recorded Inquiry:</span>
-              <p className="text-slate-200 mt-1 italic">"{selectedQuery.summary}"</p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div style={{ padding: '0.75rem', backgroundColor: '#f8fafc', borderRadius: 6, fontSize: '0.78rem' }}>
+              <div style={{ color: '#64748b', fontSize: '0.7rem' }}>Recorded Question:</div>
+              <div style={{ fontStyle: 'italic', marginTop: '0.2rem' }}>"{selectedQuery.summary}"</div>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                Resolution Workflow Status
+              <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#334155', marginBottom: '0.35rem' }}>
+                Resolution Status
               </label>
               <select
                 value={newStatus}
                 onChange={(e) => setNewStatus(e.target.value as any)}
-                className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-200 focus:outline-none focus:border-indigo-500"
+                style={{ fontSize: '0.78rem', padding: '0.4rem 0.65rem' }}
               >
                 <option value="PENDING">PENDING (Action Required)</option>
                 <option value="IN_PROGRESS">IN_PROGRESS (Coordinator Reviewing)</option>
@@ -237,7 +239,7 @@ export const ParentQueries: React.FC<ParentQueriesProps> = ({
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+              <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#334155', marginBottom: '0.35rem' }}>
                 Coordinator Action Notes & Follow-up Details
               </label>
               <textarea
@@ -245,7 +247,7 @@ export const ParentQueries: React.FC<ParentQueriesProps> = ({
                 value={resolutionNotes}
                 onChange={(e) => setResolutionNotes(e.target.value)}
                 placeholder="Document communication with parent, verification of bus log, or medical certificate guidelines provided..."
-                className="w-full p-3 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-200 placeholder:text-slate-600 focus:outline-none focus:border-indigo-500 resize-none font-sans"
+                style={{ fontSize: '0.78rem', padding: '0.65rem' }}
               />
             </div>
           </div>
