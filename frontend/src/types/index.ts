@@ -38,7 +38,7 @@ export interface StudentMark {
 }
 
 export interface CallTranscriptLine {
-  speaker: 'AI Assistant' | 'Parent';
+  speaker: 'AI Assistant' | 'Parent' | 'IVR (Telugu)' | 'IVR' | string;
   text: string;
   time: string;
 }
@@ -80,9 +80,9 @@ export interface ExcelImportPreviewRow {
   rowNumber: number;
   rollNumber: string;
   studentName: string;
-  department: string;
+  department?: string;
   section: string;
-  parentName: string;
+  parentName?: string;
   parentPhone: string;
   attendanceStatus?: string;
   marksObtained?: string;

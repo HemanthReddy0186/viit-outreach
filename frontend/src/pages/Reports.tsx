@@ -7,6 +7,8 @@ import { Card } from '../components/ui/Card';
 import { INSTITUTION_INFO } from '../mockData';
 import { CallTask, ParentQuery } from '../types';
 
+import { api } from '../services/api';
+
 interface ReportsProps {
   selectedDate: string;
   selectedSection: string;
@@ -26,8 +28,27 @@ export const Reports: React.FC<ReportsProps> = ({
 
   const completedCalls = callTasks.filter(c => c.status === 'COMPLETED').length;
 
-  const handleDownloadDocx = () => {
+  const handleDownloadDocx = async () => {
     setIsGenerating(true);
+    try {
+      const docxUrl = api.getWordReportUrl(selectedDate, selectedSection);
+      const res = await fetch(docxUrl);
+      if (res.ok) {
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `VIIT_Attendance_Report_Sec${selectedSection}_${selectedDate}.docx`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        setIsGenerating(false);
+        return;
+      }
+    } catch {
+      // Fallback to in-browser generation
+    }
+
     setTimeout(() => {
       setIsGenerating(false);
       const reportContent = `

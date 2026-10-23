@@ -19,11 +19,13 @@ venv/
 .venv/
 env/
 ENV/
+backend/venv/
 
 # Databases & Local state
 *.db
 *.sqlite3
 attendance.db
+viit_outreach.db
 
 # Environment Variables & Secrets
 .env

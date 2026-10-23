@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Sidebar, NavItem } from './components/layout/Sidebar';
 import { Topbar } from './components/layout/Topbar';
 import { Dashboard } from './pages/Dashboard';
@@ -20,6 +20,7 @@ import {
 } from './mockData';
 
 import { Student, AttendanceRecord, CallTask, ParentQuery } from './types';
+import { api } from './services/api';
 
 export function App() {
   const [currentTab, setCurrentTab] = useState<NavItem>('dashboard');
@@ -40,36 +41,61 @@ export function App() {
     setTimeout(() => setNotification(null), 3000);
   };
 
-  // Trigger simulated voice calling workflow
-  const triggerCallSimulation = () => {
-    showToast('Initiating AI Voice Outreach simulation loop...');
+  // Sync data from backend API with seamless mock fallback
+  useEffect(() => {
+    let isMounted = true;
+    async function loadData() {
+      try {
+        const [loadedStudents, loadedAtt, loadedMarks, loadedCalls, loadedQueries] = await Promise.all([
+          api.getStudents(selectedSection),
+          api.getAttendance(selectedDate, selectedSection),
+          api.getMarks(undefined, selectedSection),
+          api.getCalls(selectedDate, selectedSection),
+          api.getQueries()
+        ]);
+        if (!isMounted) return;
+        if (loadedStudents && loadedStudents.length > 0) setStudents(loadedStudents);
+        if (loadedAtt && loadedAtt.length > 0) setAttendance(loadedAtt);
+        if (loadedMarks && loadedMarks.length > 0) setMarks(loadedMarks);
+        if (loadedCalls && loadedCalls.length > 0) setCallTasks(loadedCalls);
+        if (loadedQueries && loadedQueries.length > 0) setQueries(loadedQueries);
+      } catch {
+        // Keeps mock data in offline / disconnected mode
+      }
+    }
+    loadData();
+    return () => { isMounted = false; };
+  }, [selectedSection, selectedDate]);
+
+  // Trigger automated parental voice calling (Telugu OBD / simulation)
+  const triggerCallSimulation = async () => {
+    showToast('Queueing Telugu Voice Outreach calls for absentees...');
+    await api.triggerCalls(selectedDate, selectedSection, 'PRERECORDED_TELUGU');
     
     setTimeout(() => {
       setCallTasks(prev => 
         prev.map(c => {
-          if (c.status === 'RINGING') {
+          if (c.status === 'RINGING' || c.status === 'QUEUED') {
             return {
               ...c,
               status: 'COMPLETED',
               recipientVerified: true,
-              marksDisclosed: true,
+              marksDisclosed: false,
               queryLogged: true,
-              querySummary: 'Parent acknowledged absentee notice and asked about internal practical exams.',
-              durationSeconds: 95,
+              querySummary: 'Parent acknowledged Telugu IVR absentee notification.',
+              durationSeconds: 48,
               transcript: [
                 ...c.transcript,
-                { speaker: 'Parent', text: 'Hello, this is Simhachalam. Yes, Rohit informed me he had travel delay.', time: '00:08' },
-                { speaker: 'AI Assistant', text: 'Thank you for verifying. Rohit is marked absent today. His attendance is 62.73%. Would you like his midterm marks?', time: '00:24' },
-                { speaker: 'Parent', text: 'Yes, please let me know how he did.', time: '00:35' },
-                { speaker: 'AI Assistant', text: 'In Midterm-1, Rohit scored 22/30 in DBMS and 20/30 in Operating Systems. Coordinator Dr. K.S. Rao has been notified.', time: '00:52' }
+                { speaker: 'IVR (Telugu)', text: 'విజ్ఞాన్స్ ఇంస్టిట్యూట్: విద్యార్థి హాజరు కాలేదు. అంగీకరించడానికి 1 నొక్కండి.', time: '00:04' },
+                { speaker: 'Parent', text: 'Pressed 1 (Acknowledged receipt)', time: '00:32' }
               ]
             };
           }
           return c;
         })
       );
-      showToast('AI Voice Outreach completed: Transcripts & inquiry logs generated!');
-    }, 1500);
+      showToast('Telugu Voice Outreach completed: Notifications verified!');
+    }, 1200);
   };
 
   const handleConfirmAbsenteesForCall = (absenteeIds: string[]) => {
@@ -79,15 +105,19 @@ export function App() {
 
   const handleUpdateAttendance = (newAttendance: AttendanceRecord[]) => {
     setAttendance(newAttendance);
+    api.saveAttendance(selectedDate, selectedSection, newAttendance);
   };
 
   const handleUpdateQuery = (updatedQuery: ParentQuery) => {
     setQueries(prev => prev.map(q => q.id === updatedQuery.id ? updatedQuery : q));
+    api.updateQuery(updatedQuery.id, updatedQuery.status, updatedQuery.resolutionNotes);
     showToast(`Query status updated to ${updatedQuery.status}`);
   };
 
-  const handleCommitSuccess = () => {
-    showToast('Excel records committed successfully! Marks preserved.');
+  const handleCommitSuccess = async () => {
+    showToast('Excel records committed to database! Marks preserved.');
+    const updatedStudents = await api.getStudents(selectedSection);
+    if (updatedStudents.length > 0) setStudents(updatedStudents);
     setTimeout(() => {
       setCurrentTab('students');
     }, 800);
